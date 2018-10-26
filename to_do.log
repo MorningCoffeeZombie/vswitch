@@ -7,6 +7,7 @@
 ############
 	1. Write a killswitch
 		a. service v. alias?
+			i. if alias - make it persistent
 	2. write a manager for OpenVPN server lists
 		a. Find fastest connection
 		b. auto-connect...or something like it
