@@ -1,0 +1,42 @@
+######################################
+#Killswitch & Improvements for OpenVPN
+######################################
+
+
+# PRIORITIES
+############
+	1. Write a killswitch
+		a. service v. alias?
+	2. write a manager for OpenVPN server lists
+		a. Find fastest connection
+		b. auto-connect...or something like it
+	3. make a good hosts file
+	
+
+
+
+# Notes
+#######
+https://security.stackexchange.com/questions/183177/openvpn-kill-switch-on-linux
+https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
+
+I could use an alias to mean something like: ./startkillswitch.sh
+	id have to make the alias permanent
+	or i could make an actual linux command/service
+
+
+
+
+
+Make a separate widget to modify hosts file and block ad/spam traffic
+	location: /etc/hosts
+
+
+
+
+
+
+
+
+
+
