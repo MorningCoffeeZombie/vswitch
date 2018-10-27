@@ -5,14 +5,16 @@
 
 # PRIORITIES
 ############
-	1. Write a killswitch
-		a. service v. alias?
-			i. if alias - make it persistent
-	2. write a manager for OpenVPN server lists
-		a. Find fastest connection
-		b. auto-connect...or something like it
-	3. make a good hosts file
-	
+
+make a good hosts file
+need copyright on 'man' page
+i want a 'status' command to see if the vswitch is enabled or not
+make an 'uninstall' command to remove my killswitch
+on the 'enable' command i need a failsafe to check that sudo ifconfig is using 'tun0'
+need to make connect and disconnect useful
+make function run as a command
+
+
 
 
 

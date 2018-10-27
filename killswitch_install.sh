@@ -30,7 +30,7 @@ do
 	"TCP")
 		PROTOCOL=$connect; echo "$connect entered"; break;;
 	"Either")
-		PROTOCOL=$connect; echo "$connect entered"; break;;
+		PROTOCOL="udp"; echo "$connect entered"; break;;
 	"Quit")
 		echo "Quiting program"; exit; break;;
 	*) echo "invalid option $REPLY";;
@@ -77,9 +77,10 @@ if [ $INSTALLHOSTS = "install" ]; then
 	fi
 fi
 
-# Install shell commands
+# Install shell commands and man page
 cp openVPNKillswitch.sh /etc/openvpn/openVPNKillswitch.sh
 sudo chmod +x /etc/openvpn/openVPNKillswitch.sh
+sudo cp vswitch.1 /usr/share/man/man1/
 
 # Adding call for custom functions to ~/.bashrc
 sudo echo "# Added by \"LinuxVPNKillswitch\": ">>/etc/skel/.bashrc

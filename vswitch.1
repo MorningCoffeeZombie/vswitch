@@ -1,0 +1,70 @@
+.
+.TH "VSWITCH" "" "November 2018" "" ""
+.
+
+.SH "NAME"
+	\fBvswitch\fR - disable all non-tunneled connections as a failsafe in the event of VPN disconnect.
+.
+.SH "SYNOPSIS"
+	\fBvswitch [options] [arguments]\fR
+.
+.SH "DESCRIPTION"
+ 	\fBvswitch\fR is a lightweight manager for, VPN provider specific, OpenVPN connection settings. \fBvswitch\fR, when enabled, blocks all outgoing un-tunneled communications. Default tunnel is tun0.
+
+
+.SH "OPTIONS"
+\fBhelp\fR
+.IP "" 4
+Display this man page
+.TP
+\fB/?\fR
+.IP "" 4
+Display this man page
+.TP
+\fBhost\fR [argument]
+.IP "" 4
+Change your VPN host/provider. Defaults to \fBnord\fR
+.TP
+\fBon\fR
+.IP "" 4
+(\fBengage\fR)(\fBenable\fR) Enable killswitch. All non-VPN connections will fail.
+.TP
+\fBoff\fR
+.IP "" 4
+(\fBdisengage\fR)(\fBdisable\fR) Disable killswitch. All traffic will be permitted.
+.TP
+\fBprotocol\fR [argument]
+.IP "" 4
+(\fBpr\fR) Change the protocol used to connect to VPN (\fBudp\fR or \fBtcp\fR). Changes take effect during next connection. Defaults to \fBudp\fR
+.TP
+\fBstatus\fR
+.IP "" 4
+Check if the killswitch is enabled (blocking traffic) or disabled (allowing all traffic)
+.TP
+\fBupdate\fR
+.IP "" 4
+(\fBup\fR) Update the list of servers provided by your VPN host
+
+
+.SH "EXAMPLES"
+\fBvswitch protocol udp\fR
+.IP "" 4
+Set \fBudp\fR as the preferred protocol for connecting to VPNs
+.TP
+\fBvswitch on\fR
+.IP "" 4
+Prevent all non-tunneled communications
+
+
+.
+.SH "SEE ALSO"
+\fBOpenVPN\fR
+.TP
+\fBufw\fR
+
+
+.SH "AUTHOR"
+   git clone https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git
+.
+.SH "COPYRIGHT"
+    Specify your copyright information.
