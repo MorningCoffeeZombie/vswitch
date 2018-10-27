@@ -1,5 +1,8 @@
 ![VPN](http://ais.its.psu.edu/files/2015/06/vpn-logo.png)
 
+# Dependencies
+ufw # Used for network management
+
 # LinuxVPNKillswitch
 A Linux VPN killswitch designed, primarily, for OpenVPN via NordVPN hosting.
 
