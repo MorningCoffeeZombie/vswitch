@@ -57,7 +57,7 @@ fi
 
 
 # Saving known VPNs
-# Taken from:	
+# Taken from:	https://nordvpn.com/tutorials/linux/openvpn/
 cd  /etc/openvpn
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 sudo eopkg install ca-certificates
