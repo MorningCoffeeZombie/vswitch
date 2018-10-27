@@ -77,6 +77,10 @@ if [ $INSTALLHOSTS = "install" ]; then
 	fi
 fi
 
+# Install shell commands
+cp openVPNKillswitch.sh /etc/openvpn/openVPNKillswitch.sh
+sudo chmod +x /etc/openvpn/openVPNKillswitch.sh
+
 # Adding call for custom functions to ~/.bashrc
 sudo echo "# Added by \"LinuxVPNKillswitch\": ">>/etc/skel/.bashrc
 sudo echo "# git clone https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git">>/etc/skel/.bashrc
