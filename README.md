@@ -2,6 +2,7 @@
 
 # Dependencies
 ufw # Used for network management
+openvpn # Connects to VPN hosts/servers
 
 # LinuxVPNKillswitch
 A Linux VPN killswitch designed, primarily, for OpenVPN via NordVPN hosting.
