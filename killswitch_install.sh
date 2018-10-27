@@ -55,7 +55,6 @@ if [ $(eopkg check openvpn) != "Checking integrity of openvpn*OK" ] || [ $(dpkg 
         sudo eopkg install openvpn
 fi
 
-
 # Saving known VPNs
 # Taken from:	https://nordvpn.com/tutorials/linux/openvpn/
 cd  /etc/openvpn
@@ -64,10 +63,6 @@ sudo eopkg install ca-certificates
 sudo unzip ovpn.zip
 sudo rm ovpn.zip
 cd ovpn_${PROTOCOL,,}	# Sets ovpn_ to declared variable in lower case
-
-
-# Finding fastest VPN
-
 
 # Saving original host file as a .BAK with today's date in ISO format and then installing modified verson
 if [ $INSTALLHOSTS = "install" ]; then
@@ -82,9 +77,11 @@ if [ $INSTALLHOSTS = "install" ]; then
 	fi
 fi
 
+# Run as service here
 
 
-
+echo "Installation complete!"
+echo "Use  to engage killswitch"
 
 ##################
 # UNUSED RESOURCES
