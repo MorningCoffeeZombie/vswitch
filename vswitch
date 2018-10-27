@@ -134,7 +134,7 @@ function vswitch(){
 
 
 
-echo online
+echo $0 "has completed running"
 echo $1
 echo $2
 

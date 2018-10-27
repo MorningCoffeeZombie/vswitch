@@ -6,14 +6,19 @@
 # PRIORITIES
 ############
 
-make a good hosts file
+it seems like the function isn't accepting parameters right now
+by declaring variables before the function, it may be wiping them everytime the function is run?
 need copyright on 'man' page
 i want a 'status' command to see if the vswitch is enabled or not
-make an 'uninstall' command to remove my killswitch
-on the 'enable' command i need a failsafe to check that sudo ifconfig is using 'tun0'
+on the 'enable' command i need a failsafe to check that 'sudo ifconfig' is using 'tun0'
 need to make connect and disconnect useful
 make function run as a command - still need autocomplete for arguments/options
 check the names of the "custom_hosts", "solus_hosts", etc when ive determined if debian needs a custom hosts
+
+
+
+
+
 
 
 
@@ -31,10 +36,6 @@ I could use an alias to mean something like: ./startkillswitch.sh
 
 
 
-
-
-Make a separate widget to modify hosts file and block ad/spam traffic
-	location: /etc/hosts
 
 
 
