@@ -3,12 +3,13 @@
 
 # Set common variables
 DISTRO="unknown"
+PROTOCOL="unknown"
 VPNHOST="nord"
 TUNNEL=tun0
 TODAYISO=`date '+%Y%m%d-%H%M'`
 
 
-# Offer a more secure hosts file
+# Questionaire: offer a more secure hosts file
 while true; do
 	read -p "Install a new hosts file to increase security and prevent ads? (y/n) " yn
 	case $yn in
@@ -16,7 +17,25 @@ while true; do
 		[Nn]* ) INSTALLHOSTS="skip"; break;;
 		* ) echo "Please answer yes or no.";;
 	esac
-done		
+done
+
+# Questionaire: what protocol to connect via
+PS3='What protocol would you like to connect via? '
+options=("UDP" "TCP" "Either" "Quit")
+select connect in "${options[@]}"
+do
+	case $connect in
+	"UDP")
+		PROTOCOL=$connect; echo "$connect entered"; break;;
+	"TCP")
+		PROTOCOL=$connect; echo "$connect entered"; break;;
+	"Either")
+		PROTOCOL=$connect; echo "$connect entered"; break;;
+	"Quit")
+		echo "Quiting program"; exit; break;;
+	*) echo "invalid option $REPLY";;
+	esac
+done
 
 # Make package management agnostic
 # Supporting Ubuntu + derivatives, Mint, Pure, Kali, Parrot and Tails
@@ -32,21 +51,34 @@ fi
 if [ $(eopkg check ufw) != "Checking integrity of ufw*OK" ] || [ $(dpkg -s ufw) != "*not installed*" ]; then
 	sudo eopkg install ufw
 fi
+if [ $(eopkg check openvpn) != "Checking integrity of openvpn*OK" ] || [ $(dpkg -s openvpn) != "*not installed*" ]; then
+        sudo eopkg install openvpn
+fi
 
 
-
-# Setting terminal commands/service
 # Saving known VPNs
+# Taken from:	
+cd  /etc/openvpn
+sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
+sudo eopkg install ca-certificates
+sudo unzip ovpn.zip
+sudo rm ovpn.zip
+cd ovpn_${PROTOCOL,,}	# Sets ovpn_ to declared variable in lower case
+
+
 # Finding fastest VPN
 
 
 # Saving original host file as a .BAK with today's date in ISO format and then installing modified verson
 if [ $INSTALLHOSTS = "install" ]; then
 	sudo cp /etc/hosts /etc/hosts.BAK$TODAYISO
-	if [ $DISTRO = "solus" ]; then
-		sudo cp solus_hosts /etc/hosts
-	elif [ $DISTRO = "debian" ]; then
-		sudo cp debian_hosts /etc/hosts
+	if [ -f /etc/hosts.BAK$TODAYISO ]l then
+		if [ $DISTRO = "solus" ]; then
+			sudo cp solus_hosts /etc/hosts
+		elif [ $DISTRO = "debian" ]; then
+			sudo cp debian_hosts /etc/hosts
+		fi
+		echo "Your /etc/hosts file has been backed up and replaced"
 	fi
 fi
 
