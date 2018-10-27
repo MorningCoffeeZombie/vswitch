@@ -5,8 +5,8 @@ ufw # Used for network management
 openvpn # Connects to VPN hosts/servers  
 
 # Compatibility
-Linux: Solus OS
-Linux: Debian based systems (Ubuntu + derivatives, Mint, Debian, Pure, Kali, Parrot and Tails)
+Linux: Solus OS  
+Linux: Debian based systems (Ubuntu + derivatives, Mint, Debian, Pure, Kali, Parrot and Tails)  
 
 # LinuxVPNKillswitch
 **vswitch**: "VPN kill Switch"  
@@ -19,6 +19,8 @@ The methodology employed is to utilize ufw, an uncomplicated firewall, to block 
 A custom hosts file is also included. This will attempt to limit spam/ads/intrusive behavior from less reputable domains. At time of installation you will be prompted to install or skip this file. Should you choose to install; a backup hosts file will be created in the same directory and named "hosts.BAK20181027-1735" where the string of numbers represent the date of installation in ISO format.  
 
 Once installation is complete you may remove the repo from your PC. To uninstall simply run the command **vswitch uninstall** to remove all remaining files.  
+
+Usage documentation has been provided via man page. Run **man vswitch** to view options and settings.  
 
 
 

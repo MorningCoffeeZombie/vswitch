@@ -111,8 +111,16 @@ function vswitch(){
 	# UNINSTALL
 	###########
 	if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
-		sudo rm /usr/bin/vswitch
-		sudo rm /usr/share/man/man1/vswitch.1
+		PS3='Remove vswitch? '
+		options=("y" "n" "Quit") y/n
+		while true; do
+		    read -p "Remove vswitch? (y/n) " yn
+		    case $yn in
+		        [Yy]* ) sudo rm /usr/bin/vswitch; sudo rm /usr/share/man/man1/vswitch.1; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch"; break;;
+		        [Nn]* ) echo "vswitch will not be removed"; break;;
+		        * ) echo "Please answer yes or no.";;
+		    esac
+		done
 	fi
 
 
@@ -120,9 +128,15 @@ function vswitch(){
 
 
 
+#################
+# UNUSED RESOURCE
+#################
 
 
 
+echo online
+echo $1
+echo $2
 
 
 
