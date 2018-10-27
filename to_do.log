@@ -20,6 +20,7 @@
 #######
 https://security.stackexchange.com/questions/183177/openvpn-kill-switch-on-linux
 https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
+https://github.com/renapoliveira/killswitch-for-openvpn/blob/master/killswitch.sh
 
 I could use an alias to mean something like: ./startkillswitch.sh
 	id have to make the alias permanent
