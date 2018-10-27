@@ -38,11 +38,11 @@ do
 done
 
 # Make package management agnostic
-# Supporting Ubuntu + derivatives, Mint, Pure, Kali, Parrot and Tails
+# Supporting Ubuntu + derivatives, Mint, Debian, Pure, Kali, Parrot and Tails
 if [ $(uname -s) = *solus* ]; then
 	alias 'apt-get'=eopkg
 	DISTRO="solus"
-elif [ $(uname -s) = *ubuntu* ] ||  [ $(uname -s) = *mint* ] || [ $(uname -s) = *pure* ] || [ $(uname -s) = *kali* ] || [ $(uname -s) = *parrot* ] || [ $(uname -s) = *tails* ]; then
+elif [ $(uname -s) = *ubuntu* ] ||  [ $(uname -s) = *mint* ] ||  [ $(uname -s) = *debian* ] || [ $(uname -s) = *pure* ] || [ $(uname -s) = *kali* ] || [ $(uname -s) = *parrot* ] || [ $(uname -s) = *tails* ]; then
         alias eopkg="apt-get"
 	DISTRO="debian"
 fi
@@ -77,11 +77,15 @@ if [ $INSTALLHOSTS = "install" ]; then
 	fi
 fi
 
-# Run as service here
+# Adding call for custom functions to ~/.bashrc
+sudo echo "# Added by \"LinuxVPNKillswitch\": ">>/etc/skel/.bashrc
+sudo echo "# git clone https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git">>/etc/skel/.bashrc
+sudo echo "source /etc/openvpn/openVPNKillswitch.sh">>/etc/skel/.bashrc
+
 
 
 echo "Installation complete!"
-echo "Use  to engage killswitch"
+echo "Use the \"vswitch\" command to engage killswitch"
 
 ##################
 # UNUSED RESOURCES
