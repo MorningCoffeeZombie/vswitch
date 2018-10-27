@@ -123,7 +123,7 @@ TESTER=$2
 echo $TESTER "var NOT in quotes"
 
 
-#sudo echo "source /home/solus/Desktop/openVPNKillswitch.sh">>/etc/skel/.bashrc
+#sudo echo "source /home/solus/Desktop/vswitch">>/etc/skel/.bashrc
 
 
 
