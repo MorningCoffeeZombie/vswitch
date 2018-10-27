@@ -108,22 +108,13 @@ function vswitch(){
 }
 
 
-
-################################################
-# TESTING SECTION - delete when script completed
-################################################
-echo you typed \(as raw\) $1
-echo you typed \(as bracket\) ${1}
-echo "you typed (as raw ouside quotes)" $1
-echo "you typed (as bracket outside quotes)" ${1}
-echo you may have typed $2
-TESTER="$2"
-echo $TESTER "var in quotes"
-TESTER=$2
-echo $TESTER "var NOT in quotes"
-
-
-#sudo echo "source /home/solus/Desktop/vswitch">>/etc/skel/.bashrc
+	###########
+	# UNINSTALL
+	###########
+	if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
+		sudo rm /usr/bin/vswitch
+		sudo rm /usr/share/man/man1/vswitch.1
+	fi
 
 
 

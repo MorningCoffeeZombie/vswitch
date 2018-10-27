@@ -2,8 +2,8 @@
 
 
 # Set common variables
-DISTRO="unknown"
-PROTOCOL="unknown"
+DISTRO="solus"
+PROTOCOL="udp"
 VPNHOST="nord"
 TUNNEL=tun0
 TODAYISO=`date '+%Y%m%d-%H%M'`
@@ -48,10 +48,10 @@ elif [ $(uname -s) = *ubuntu* ] ||  [ $(uname -s) = *mint* ] ||  [ $(uname -s) =
 fi
 
 # Check for dependencies, install if absent
-if [ $(eopkg check ufw) != "Checking integrity of ufw*OK" ] || [ $(dpkg -s ufw) != "*not installed*" ]; then
+if [ $(sudo eopkg check ufw) != "Checking integrity of ufw*OK" ] || [ $(dpkg -s ufw) != "*not installed*" ]; then
 	sudo eopkg install ufw
 fi
-if [ $(eopkg check openvpn) != "Checking integrity of openvpn*OK" ] || [ $(dpkg -s openvpn) != "*not installed*" ]; then
+if [ $(sudo eopkg check openvpn) != "Checking integrity of openvpn*OK" ] || [ $(dpkg -s openvpn) != "*not installed*" ]; then
         sudo eopkg install openvpn
 fi
 

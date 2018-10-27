@@ -12,7 +12,7 @@ i want a 'status' command to see if the vswitch is enabled or not
 make an 'uninstall' command to remove my killswitch
 on the 'enable' command i need a failsafe to check that sudo ifconfig is using 'tun0'
 need to make connect and disconnect useful
-make function run as a command
+make function run as a command - still need autocomplete for arguments/options
 
 
 
