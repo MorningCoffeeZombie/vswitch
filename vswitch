@@ -105,7 +105,6 @@ function vswitch(){
 		sudo ufw enable
 		echo "VPN killswitch disabled"
 	fi
-}
 
 
 	###########
@@ -117,7 +116,7 @@ function vswitch(){
 	fi
 
 
-
+}
 
 
 

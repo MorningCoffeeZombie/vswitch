@@ -69,9 +69,9 @@ if [ $INSTALLHOSTS = "install" ]; then
 	sudo cp /etc/hosts /etc/hosts.BAK$TODAYISO
 	if [ -f /etc/hosts.BAK$TODAYISO ]l then
 		if [ $DISTRO = "solus" ]; then
-			sudo cp solus_hosts /etc/hosts
+			sudo cp custom_hosts /etc/hosts
 		elif [ $DISTRO = "debian" ]; then
-			sudo cp debian_hosts /etc/hosts
+			sudo cp custom_hosts /etc/hosts
 		fi
 		echo "Your /etc/hosts file has been backed up and replaced"
 	fi
