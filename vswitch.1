@@ -33,6 +33,10 @@ Change your VPN host/provider. Defaults to \fBnord\fR
 .IP "" 4
 (\fBdisengage\fR)(\fBdisable\fR) Disable killswitch. All traffic will be permitted.
 .TP
+\fBpanic\fR
+.IP "" 4
+(\fBpan\fR) Kill all incoming and all outgoing traffic. This can be reverted with \fBunpanic\fR whereby \fBvswitch\fR will enter a standard killswitch-enabled state.
+.TP
 \fBprotocol\fR [argument]
 .IP "" 4
 (\fBpr\fR) Change the protocol used to connect to VPN (\fBudp\fR or \fBtcp\fR). Changes take effect during next connection. Defaults to \fBudp\fR
@@ -44,6 +48,10 @@ Change your VPN host/provider. Defaults to \fBnord\fR
 \fBstatus\fR
 .IP "" 4
 Check if the killswitch is enabled (blocking traffic) or disabled (allowing all traffic)
+.TP
+\fBunpanic\fR
+.IP "" 4
+Return \fBvswitch\fR to a standard killswitch-enabled state. From here you may run \fBvswitch off\fR to return to a non-VPN enabled state.
 .TP
 \fBupdate\fR
 .IP "" 4

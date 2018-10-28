@@ -2,129 +2,142 @@
 
 PROTOCOL="udp"
 VPNHOST="nord"
+BOLDFONT=$(tput bold)
+NORMALFONT=$(tput sgr0)
 
 # Command: vswitch
 
-function vswitch(){
-	################
-	# HELP/MAN PAGES
-	################
-	if [ "$1" = "" ]; then
-		echo "Enter an argument or use \"man vswitch\" to view usage"
-	fi
-	if [ "$1" = "help" ] || [ "$1" = "/?" ] ; then
-		man vswitch
-	fi
-	
 
-	##########
-	# SETTINGS
-	##########
-	if [ "$1" = "update" ] || [ "$1" = "up" ] ; then
-		# Taken from:   https://nordvpn.com/tutorials/linux/openvpn/
-		cd  /etc/openvpn
-			if [ "$VPNHOST" = "nord" ]; then	
-				sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-				if [ $(uname -s) = *solus* ]; then
-				sudo eopkg install ca-certificates
-			else
-				sudo apt-get install ca-certificates	
-			fi
-			sudo unzip ovpn.zip
-			sudo rm ovpn.zip
-			cd /etc/openvpn/ovpn_${PROTOCOL,,}   # Sets ovpn_ to declared variable in lower case
+################
+# HELP/MAN PAGES
+################
+if [ "$1" = "" ]; then
+	echo "Enter an argument or use \"man vswitch\" to view usage"
+fi
+if [ "$1" = "help" ] || [ "$1" = "/?" ] ; then
+	man vswitch
+fi
+
+
+##########
+# SETTINGS
+##########
+if [ "$1" = "update" ] || [ "$1" = "up" ] ; then
+# Taken from:   https://nordvpn.com/tutorials/linux/openvpn/
+cd  /etc/openvpn
+		if [ "$VPNHOST" = "nord" ]; then	
+			sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
+			if [ $(uname -s) = *solus* ]; then
+			sudo eopkg install ca-certificates
+		else
+			sudo apt-get install ca-certificates	
 		fi
+		sudo unzip ovpn.zip
+		sudo rm ovpn.zip
+		cd /etc/openvpn/ovpn_${PROTOCOL,,}   # Sets ovpn_ to declared variable in lower case
 	fi
-	if [ "$1" = "host*" ]; then
-		VPNHOST="$2"
-		if [ "$2" = "" ] || [ "$2" != "Nord*" ] || [ "$2" != "nord*" ]; then
-			PS3='Choose from a list of supported VPN providers: '
-			options=("NordVPN" "Quit")
-			select provider in "${options[@]}"
-			do
-			case $provider in
-				"NordVPN")
-					VPNHOST="nord"; echo "$provider entered"; break;;
-				"Quit")
-					break;;
-				*) echo "invalid option $REPLY";;
-			esac
-			done				
-		fi
+fi
+if [[ "$1" = host* ]]; then
+	VPNHOST="$2"
+	if [ "$2" = "" ] || [[ "$2" != * ]] || [[ "$2" != Nord* ]] || [[ "$2" != nord* ]]; then
+		PS3='Choose from a list of supported VPN providers: '
+		options=("NordVPN" "Quit")
+		select provider in "${options[@]}"
+		do
+		case $provider in
+			"NordVPN")
+				VPNHOST="nord"; echo "$provider entered"; break;;
+			"Quit")
+				break;;
+			*) echo "invalid option $REPLY";;
+		esac
+		done				
 	fi
-	if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
-		PROTOCOL="$2"
-		if [ "$2" = "" ] || [ "$2" != "udp" ] || [ "$2" != "tcp" ]; then
-			PS3='What protocol would you like to connect via? '
-			options=("UDP" "TCP" "Either" "Quit")
-			select method in "${options[@]}"
-			do
-				case $method in
-				"UDP")
-					PROTOCOL=${method,,}; echo "$method entered"; break;;
-				"TCP")
-					PROTOCOL=${method,,}; echo "$method entered"; break;;
-				"Either")
-					PROTOCOL="udp"; echo "$method entered"; break;;
-				"Quit")
-					echo "Quiting program"; exit; break;;
-				*) echo "invalid option $REPLY";;
-			esac
-			done
-		fi
-		vswitch protocol $PROTOCOL
-	fi
-#	if [ "$1" = "status" ]; then
-#
-#	fi
-	
-
-	####################
-	# CONNECT AND ENABLE
-	####################
-#	if [ "$1" = "connect*" ]; then
-#		
-#	fi
-#	if [ "$1" = "disconnect*" ]; then
-#		
-#	fi
-	if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
-		# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
-		sudo ufw reset
-		sudo ufw default deny incoming
-		sudo ufw default deny outgoing
-		sudo ufw allow out on tun0 from any to any
-		sudo ufw enable
-		echo "VPN killswitch enabled"
-	fi
-	if [ "$1" = "off*" ] || [ "$1" = "disengage*" ] || [ "$1" = "disenable" ] ; then
-		# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
-		sudo ufw reset
-		sudo ufw default deny incoming
-		sudo ufw default allow outgoing
-		sudo ufw enable
-		echo "VPN killswitch disabled"
-	fi
-
-
-	###########
-	# UNINSTALL
-	###########
-	if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
-		PS3='Remove vswitch? '
-		options=("y" "n" "Quit") y/n
-		while true; do
-		    read -p "Remove vswitch? (y/n) " yn
-		    case $yn in
-		        [Yy]* ) sudo rm /usr/bin/vswitch; sudo rm /usr/share/man/man1/vswitch.1; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch"; break;;
-		        [Nn]* ) echo "vswitch will not be removed"; break;;
-		        * ) echo "Please answer yes or no.";;
-		    esac
+fi
+if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
+	PROTOCOL="$2"
+	if [ "$2" != "udp" ] && [ "$2" != "tcp" ]; then
+		PS3='What protocol would you like to connect via? '
+		options=("UDP" "TCP" "Either" "Quit")
+		select connectmethod in "${options[@]}"
+		do
+		case $connectmethod in
+			"UDP")
+				PROTOCOL=${connectmethod,,}; echo "$PROTOCOL entered"; break;;
+			"TCP")
+				PROTOCOL=${connectmethod,,}; echo "$PROTOCOL entered"; break;;
+			"Either")
+				PROTOCOL="udp"; echo "\"$connectmethod\" entered - protocol defaulting to $PROTOCOL"; break;;
+			"Quit")
+				break;;
+			*) echo "invalid option $REPLY";;
+		esac
 		done
 	fi
+fi
+if [ "$1" = "status" ]; then
+	printf "${BOLDFONT}Host:${NORMALFONT} 		\t $VPNHOST \n"
+	printf "${BOLDFONT}Protocol:${NORMALFONT}	\t $PROTOCOL \n"
+fi
+	
+
+####################
+# CONNECT AND ENABLE
+####################
+#if [[ "$1" = connect* ]]; then
+#		
+#fi
+#if [[ "$1" = disconnect* ]]; then
+#		
+#fi
+#if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
+#		
+#fi
+if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
+	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
+	sudo ufw reset
+	sudo ufw default deny incoming
+	sudo ufw default deny outgoing
+	sudo ufw allow out on tun0 from any to any
+	sudo ufw enable
+	echo "VPN killswitch enabled"
+fi
+if [ "$1" = "off*" ] || [ "$1" = "disengage*" ] || [ "$1" = "disenable" ] ; then
+	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
+	sudo ufw reset
+	sudo ufw default deny incoming
+	sudo ufw default allow outgoing
+	sudo ufw enable
+	echo "VPN killswitch disabled"
+fi
 
 
+###########
+# UNINSTALL
+###########
+
+function uninstall_list(){
+	# List all files associated with this script
+	sudo rm /usr/bin/vswitch
+	sudo rm /usr/share/man/man1/vswitch.1
 }
+
+
+if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
+	PS3='Remove vswitch? '
+	options=("y" "n" "Quit") y/n
+	while true; do
+	    read -p "Remove vswitch? (y/n) " yn
+	    case $yn in
+	        [Yy]* ) uninstall_list; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch"; break;;
+	        [Nn]* ) echo "vswitch will not be removed"; break;;
+	        * ) echo "Please answer yes or no.";;
+	    esac
+	done
+fi
+
+
+
 
 
 
@@ -134,9 +147,9 @@ function vswitch(){
 
 
 
-echo $0 "has completed running"
-echo $1
-echo $2
+#echo $0 "has completed running"
+#echo $1
+#echo $2
 
 
 
