@@ -102,7 +102,7 @@ if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
 	sudo ufw enable
 	echo "VPN killswitch enabled"
 fi
-if [ "$1" = "off*" ] || [ "$1" = "disengage*" ] || [ "$1" = "disenable" ] ; then
+if [ "$1" = "off*" ] || [ "$1" = "disengage*" ] || [ "$1" = "disable" ] ; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
 	sudo ufw reset
 	sudo ufw default deny incoming
@@ -121,7 +121,6 @@ function uninstall_list(){
 	sudo rm /usr/bin/vswitch
 	sudo rm /usr/share/man/man1/vswitch.1
 }
-
 
 if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
 	PS3='Remove vswitch? '

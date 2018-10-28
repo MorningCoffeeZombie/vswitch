@@ -19,24 +19,6 @@ while true; do
 	esac
 done
 
-# Questionaire: what protocol to connect via
-PS3='What protocol would you like to connect via? '
-options=("UDP" "TCP" "Either" "Quit")
-select connect in "${options[@]}"
-do
-	case $connect in
-	"UDP")
-		PROTOCOL=$connect; echo "$connect entered"; break;;
-	"TCP")
-		PROTOCOL=$connect; echo "$connect entered"; break;;
-	"Either")
-		PROTOCOL="udp"; echo "$connect entered"; break;;
-	"Quit")
-		echo "Quiting program"; exit; break;;
-	*) echo "invalid option $REPLY";;
-	esac
-done
-
 # Make package management agnostic
 # Supporting Ubuntu + derivatives, Mint, Debian, Pure, Kali, Parrot and Tails
 if [ $(uname -s) = *solus* ]; then
