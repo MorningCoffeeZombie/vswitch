@@ -7,8 +7,8 @@
 ############
 
 
-by declaring variables before the function, it may be wiping them everytime the function is run?
-	i need vswitch to remember user settings (host and protocol)
+
+need to have a failsafe for if the conf file has gone missing
 need copyright on 'man' page
 i want a 'status' command to see if the vswitch is enabled or not (use ifconfig to grep)
 make a 'panic' function to shut down all traffic on all ports/protocols/etc

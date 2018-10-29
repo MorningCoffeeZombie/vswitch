@@ -62,6 +62,8 @@ fi
 # Install shell commands and man page
 cp vswitch /usr/bin/vswitch
 sudo chmod +x /usr/bin/vswitch
+cp vswitch.conf /etc/vswitch.conf
+sudo chmod +rwx /etc/vswitch.conf
 sudo cp vswitch.1 /usr/share/man/man1/
 
 # Adding call for custom functions to ~/.bashrc

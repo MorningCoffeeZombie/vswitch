@@ -1,11 +1,24 @@
 #!/bin/bash
 
-PROTOCOL="udp"
-VPNHOST="nord"
+source /etc/vswitch.conf
 BOLDFONT=$(tput bold)
 NORMALFONT=$(tput sgr0)
 
 # Command: vswitch
+
+
+# Confirm the /etc/vswitch.conf file is present
+function check_conf(){
+	if [ -f "/etc/vswitch.conf" ]; then
+		# File was found, don't need to do anything
+	else
+		echo "Config file could not be found, creating a new one"
+		echo "PROTOCOL=udp">>/etc/vswitch.conf
+		echo "VPNHOST=nord">>/etc/vswitch.conf
+		echo "DISTRO=solus">>/etc/vswitch.conf
+		echo "TUNNEL=tun0">>/etc/vswitch.conf
+	fi
+}
 
 
 ################
@@ -46,7 +59,7 @@ if [[ "$1" = host* ]]; then
 		do
 		case $provider in
 			"NordVPN")
-				VPNHOST="nord"; echo "$provider entered"; break;;
+				check_conf; '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; echo "$VPNHOST entered"; break;;
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -63,11 +76,11 @@ if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
 		do
 		case $connectmethod in
 			"UDP")
-				PROTOCOL=${connectmethod,,}; echo "$PROTOCOL entered"; break;;
+				check_conf; sed -i '/PROTOCOL/ s/.*/PROTOCOL='${connectmethod,,}'/' /etc/vswitch.conf; echo "$PROTOCOL entered"; break;;
 			"TCP")
-				PROTOCOL=${connectmethod,,}; echo "$PROTOCOL entered"; break;;
+				check_conf; sed -i '/PROTOCOL/ s/.*/PROTOCOL='${connectmethod,,}'/' /etc/vswitch.conf; echo "$PROTOCOL entered"; break;;
 			"Either")
-				PROTOCOL="udp"; echo "\"$connectmethod\" entered - protocol defaulting to $PROTOCOL"; break;;
+				check_conf; sed -i '/PROTOCOL/ s/.*/PROTOCOL=udp/' /etc/vswitch.conf; PROTOCOL="udp"; echo "\"$connectmethod\" entered - protocol defaulting to $PROTOCOL"; break;;
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -78,6 +91,8 @@ fi
 if [ "$1" = "status" ]; then
 	printf "${BOLDFONT}Host:${NORMALFONT} 		\t $VPNHOST \n"
 	printf "${BOLDFONT}Protocol:${NORMALFONT}	\t $PROTOCOL \n"
+	printf "${BOLDFONT}Distro:${NORMALFONT}	\t $DISTRO \n"
+	printf "${BOLDFONT}Tunnel:${NORMALFONT}	\t $TUNNEL \n"
 fi
 	
 
@@ -120,6 +135,7 @@ function uninstall_list(){
 	# List all files associated with this script
 	sudo rm /usr/bin/vswitch
 	sudo rm /usr/share/man/man1/vswitch.1
+	sudo rm /etc/vswitch.conf
 }
 
 if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
