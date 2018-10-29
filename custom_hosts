@@ -98,9 +98,7 @@ ff02::3 ip6-allhosts
 127.0.0.1 addfreestats.com
 127.0.0.1 adelogs.adobe.com	#See http://www.theregister.co.uk/2014/10/07/adobe_digital_editions_4_caught_snooping_into_ebook_collections_of_users/
 127.0.0.1 ademails.com
-127.0.0.1 adlog.com.com # Used by Ziff Davis to serve 
-  # ads and track users across 
-  # the com.com family of sites
+127.0.0.1 adlog.com.com		# Used by Ziff Davis to serve ads and track users across the com.com family of sites
 127.0.0.1 ad-logics.com
 127.0.0.1 admanmail.com
 127.0.0.1 admin.iesnare.com
@@ -1237,7 +1235,7 @@ ff02::3 ip6-allhosts
 127.0.0.1 superstats.com
 127.0.0.1 sync.bfmio.com
 127.0.0.1 sync.clickonometrics.pl
-127.0.0.1 s.youtube.com				# Blocking this will interfere with video watching history
+127.0.0.1 s.youtube.com				# Blocking this will interfere with video watching history ####!!!####
 127.0.0.1 systweak.com
 #127.0.0.1 t2.hulu.com		# Uncomment to block Hulu.
 127.0.0.1 tag.crsspxl.com
