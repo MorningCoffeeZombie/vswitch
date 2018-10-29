@@ -8,15 +8,14 @@ NORMALFONT=$(tput sgr0)
 
 
 # Confirm the /etc/vswitch.conf file is present
-function check_conf(){
-	if [ -f "/etc/vswitch.conf" ]; then
-		# File was found, don't need to do anything
-	else
+function fn_check_conf(){
+	if [ ! -f "/etc/vswitch.conf" ]; then
 		echo "Config file could not be found, creating a new one"
-		echo "PROTOCOL=udp">>/etc/vswitch.conf
-		echo "VPNHOST=nord">>/etc/vswitch.conf
-		echo "DISTRO=solus">>/etc/vswitch.conf
-		echo "TUNNEL=tun0">>/etc/vswitch.conf
+		sudo echo "PROTOCOL=udp" | sudo tee --append /etc/vswitch.conf
+		sudo echo "VPNHOST=nord" | sudo tee --append /etc/vswitch.conf
+		sudo echo "DISTRO=solus" | sudo tee --append /etc/vswitch.conf
+		sudo echo "TUNNEL=tun0" | sudo tee --append /etc/vswitch.conf
+		echo "New config file successfully created"
 	fi
 }
 
@@ -53,13 +52,14 @@ fi
 if [[ "$1" = host* ]]; then
 	VPNHOST="$2"
 	if [ "$2" = "" ] || [[ "$2" != * ]] || [[ "$2" != Nord* ]] || [[ "$2" != nord* ]]; then
+		fn_check_conf
 		PS3='Choose from a list of supported VPN providers: '
 		options=("NordVPN" "Quit")
 		select provider in "${options[@]}"
 		do
 		case $provider in
 			"NordVPN")
-				check_conf; '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; echo "$VPNHOST entered"; break;;
+				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; echo "$provider entered"; break;;
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -70,17 +70,18 @@ fi
 if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
 	PROTOCOL="$2"
 	if [ "$2" != "udp" ] && [ "$2" != "tcp" ]; then
+		fn_check_conf
 		PS3='What protocol would you like to connect via? '
 		options=("UDP" "TCP" "Either" "Quit")
 		select connectmethod in "${options[@]}"
 		do
 		case $connectmethod in
 			"UDP")
-				check_conf; sed -i '/PROTOCOL/ s/.*/PROTOCOL='${connectmethod,,}'/' /etc/vswitch.conf; echo "$PROTOCOL entered"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${connectmethod,,}'/' /etc/vswitch.conf; echo "$connectmethod entered"; break;;
 			"TCP")
-				check_conf; sed -i '/PROTOCOL/ s/.*/PROTOCOL='${connectmethod,,}'/' /etc/vswitch.conf; echo "$PROTOCOL entered"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${connectmethod,,}'/' /etc/vswitch.conf; echo "$connectmethod entered"; break;;
 			"Either")
-				check_conf; sed -i '/PROTOCOL/ s/.*/PROTOCOL=udp/' /etc/vswitch.conf; PROTOCOL="udp"; echo "\"$connectmethod\" entered - protocol defaulting to $PROTOCOL"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL=udp/' /etc/vswitch.conf; PROTOCOL="udp"; echo "\"$connectmethod\" entered - protocol defaulting to $PROTOCOL"; break;;
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -89,10 +90,11 @@ if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
 	fi
 fi
 if [ "$1" = "status" ]; then
-	printf "${BOLDFONT}Host:${NORMALFONT} 		\t $VPNHOST \n"
+	printf "${BOLDFONT}Host:${NORMALFONT}		\t $VPNHOST \n"
 	printf "${BOLDFONT}Protocol:${NORMALFONT}	\t $PROTOCOL \n"
 	printf "${BOLDFONT}Distro:${NORMALFONT}	\t $DISTRO \n"
 	printf "${BOLDFONT}Tunnel:${NORMALFONT}	\t $TUNNEL \n"
+	nmcli general status
 fi
 	
 
@@ -105,9 +107,23 @@ fi
 #if [[ "$1" = disconnect* ]]; then
 #		
 #fi
-#if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
-#		
-#fi
+if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
+	nmcli networking off
+	sudo ufw default deny incoming
+	sudo ufw default deny outgoing
+	#nmcli networking connectivity
+	#nmcli general status
+	echo "${BOLDFONT}PANIC MODE ENABLED${NORMALFONT}"
+fi
+if [[ "$1" = unpanic* ]]; then
+	sudo ufw reset
+	sudo ufw default deny incoming
+	sudo ufw default deny outgoing
+	sudo ufw allow out on tun0 from any to any
+	sudo ufw enable
+	nmcli networking on
+	echo "VPN killswitch enabled"
+fi
 if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
 	sudo ufw reset

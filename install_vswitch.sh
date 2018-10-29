@@ -30,10 +30,10 @@ elif [ $(uname -s) = *ubuntu* ] ||  [ $(uname -s) = *mint* ] ||  [ $(uname -s) =
 fi
 
 # Check for dependencies, install if absent
-if [ $(sudo eopkg check ufw) != "Checking integrity of ufw*OK" ] || [ $(dpkg -s ufw) != "*not installed*" ]; then
+if [[ $(sudo eopkg check ufw) != Checking integrity of ufw*OK ]] || [[ $(dpkg -s ufw) != *not installed* ]]; then
 	sudo eopkg install ufw
 fi
-if [ $(sudo eopkg check openvpn) != "Checking integrity of openvpn*OK" ] || [ $(dpkg -s openvpn) != "*not installed*" ]; then
+if [[ $(sudo eopkg check openvpn) != Checking integrity of openvpn*OK ]] || [[ $(dpkg -s openvpn) != *not installed* ]]; then
         sudo eopkg install openvpn
 fi
 
@@ -60,10 +60,10 @@ if [ $INSTALLHOSTS = "install" ]; then
 fi
 
 # Install shell commands and man page
-cp vswitch /usr/bin/vswitch
+sudo cp vswitch /usr/bin/vswitch
 sudo chmod +x /usr/bin/vswitch
-cp vswitch.conf /etc/vswitch.conf
-sudo chmod +rwx /etc/vswitch.conf
+sudo cp vswitch.conf /etc/vswitch.conf
+sudo chmod +r /etc/vswitch.conf
 sudo cp vswitch.1 /usr/share/man/man1/
 
 # Adding call for custom functions to ~/.bashrc

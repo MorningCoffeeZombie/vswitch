@@ -8,7 +8,6 @@
 
 
 
-need to have a failsafe for if the conf file has gone missing
 need copyright on 'man' page
 i want a 'status' command to see if the vswitch is enabled or not (use ifconfig to grep)
 make a 'panic' function to shut down all traffic on all ports/protocols/etc
@@ -16,7 +15,7 @@ on the 'enable' command i need a failsafe to check that 'sudo ifconfig' is using
 need to make connect and disconnect useful
 make function run as a command - still need autocomplete for arguments/options
 check the names of the "custom_hosts", "solus_hosts", etc when ive determined if debian needs a custom hosts
-
+still having issues with the dependencies check on the install script
 
 
 
