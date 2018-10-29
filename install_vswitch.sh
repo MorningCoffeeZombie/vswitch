@@ -21,19 +21,21 @@ done
 
 # Make package management agnostic
 # Supporting Ubuntu + derivatives, Mint, Debian, Pure, Kali, Parrot and Tails
+# Could also run:	uname -a | grep -i ubuntu
 if [ $(uname -s) = *solus* ]; then
 	alias 'apt-get'=eopkg
 	DISTRO="solus"
-elif [ $(uname -s) = *ubuntu* ] ||  [ $(uname -s) = *mint* ] ||  [ $(uname -s) = *debian* ] || [ $(uname -s) = *pure* ] || [ $(uname -s) = *kali* ] || [ $(uname -s) = *parrot* ] || [ $(uname -s) = *tails* ]; then
+elif [ $(uname -a) = *ubuntu* ] ||  [ $(uname -a) = *mint* ] ||  [ $(uname -a) = *debian* ] || [ $(uname -a) = *pure* ] || [ $(uname -a) = *kali* ] || [ $(uname -a) = *parrot* ] || [ $(uname -a) = *tails* ]; then
         alias eopkg="apt-get"
 	DISTRO="debian"
 fi
 
 # Check for dependencies, install if absent
-if [[ $(sudo eopkg check ufw) != Checking integrity of ufw*OK ]] || [[ $(dpkg -s ufw) != *not installed* ]]; then
+# Could also run:	 dpkg -s openvpn | grep -i "Status:"
+if [[ $(sudo eopkg check ufw) != Checking integrity of ufw*OK ]] || [[ $(dpkg -s ufw) = *not installed* ]]; then
 	sudo eopkg install ufw
 fi
-if [[ $(sudo eopkg check openvpn) != Checking integrity of openvpn*OK ]] || [[ $(dpkg -s openvpn) != *not installed* ]]; then
+if [[ $(sudo eopkg check openvpn) != Checking integrity of openvpn*OK ]] || [[ $(dpkg -s openvpn) = *not installed* ]]; then
         sudo eopkg install openvpn
 fi
 
@@ -72,7 +74,7 @@ sudo cp vswitch.1 /usr/share/man/man1/
 #sudo echo "source /etc/openvpn/vswitch">>/etc/skel/.bashrc
 
 
-
+ 
 echo "Installation complete!"
 echo "Use the \"vswitch\" command to engage killswitch"
 
