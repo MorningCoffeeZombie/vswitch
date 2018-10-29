@@ -1,4 +1,5 @@
 #!/bin/bash
+# GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
 source /etc/vswitch.conf
 BOLDFONT=$(tput bold)
@@ -146,7 +147,6 @@ fi
 ###########
 # UNINSTALL
 ###########
-
 function uninstall_list(){
 	# List all files associated with this script
 	sudo rm /usr/bin/vswitch
