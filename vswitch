@@ -16,6 +16,7 @@ function fn_check_conf(){
 		sudo echo "VPNHOST=nord" | sudo tee --append /etc/vswitch.conf
 		sudo echo "DISTRO=solus" | sudo tee --append /etc/vswitch.conf
 		sudo echo "TUNNEL=tun0" | sudo tee --append /etc/vswitch.conf
+		sudo echo "IPVERSION=4" | sudo tee --append /etc/vswitch.conf
 		echo "New config file successfully created"
 	fi
 }
@@ -74,15 +75,36 @@ if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
 		fn_check_conf
 		PS3='What protocol would you like to connect via? '
 		options=("UDP" "TCP" "Either" "Quit")
-		select connectmethod in "${options[@]}"
+		select protomethod in "${options[@]}"
 		do
-		case $connectmethod in
+		case $protomethod in
 			"UDP")
-				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${connectmethod,,}'/' /etc/vswitch.conf; echo "$connectmethod entered"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${protomethod,,}'/' /etc/vswitch.conf; echo "$protomethod entered"; break;;
 			"TCP")
-				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${connectmethod,,}'/' /etc/vswitch.conf; echo "$connectmethod entered"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${protomethod,,}'/' /etc/vswitch.conf; echo "$protomethod entered"; break;;
 			"Either")
-				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL=udp/' /etc/vswitch.conf; PROTOCOL="udp"; echo "\"$connectmethod\" entered - protocol defaulting to $PROTOCOL"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL=udp/' /etc/vswitch.conf; PROTOCOL="udp"; echo "\"$protomethod\" entered - protocol defaulting to $PROTOCOL"; break;;
+			"Quit")
+				break;;
+			*) echo "invalid option $REPLY";;
+		esac
+		done
+	fi
+fi
+if [ "$1" = "ipversion" ] || [ "$1" = "ipv" ]; then
+	if [[ "$2" != *4* ]] && [[ "$2" != *6* ]]; then
+		fn_check_conf
+		PS3='What protocol version would you like to connect via? (You are set to connect via $PROTOCOL) '
+		options=("IPv4" "IPv6" "Either" "Quit")
+		select connectversion in "${options[@]}"
+		do
+		case $connectversion in
+			"IPv4")
+				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='4'/' /etc/vswitch.conf; echo "$connectversion entered"; break;;
+			"IPv6")
+				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='6'/' /etc/vswitch.conf; echo "$connectversion entered"; break;;
+			"Either")
+				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='4'/' /etc/vswitch.conf; echo "$connectversion  entered - version defaulting to IPv$IPVERSION""; break;;
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
