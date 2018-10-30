@@ -44,6 +44,7 @@ fi
 cd  /etc/openvpn
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 sudo eopkg install ca-certificates
+sudo eopkg install ca-certs
 sudo unzip ovpn.zip
 sudo rm ovpn.zip
 cd ovpn_${PROTOCOL,,}	# Sets ovpn_ to declared variable in lower case

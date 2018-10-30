@@ -43,8 +43,10 @@ cd  /etc/openvpn
 			sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 			if [ $(uname -s) = *solus* ]; then
 			sudo eopkg install ca-certificates
+			sudo eopkg install ca-certs
 		else
-			sudo apt-get install ca-certificates	
+			sudo apt-get install ca-certificates
+			sudo eopkg install ca-certs	
 		fi
 		sudo unzip ovpn.zip
 		sudo rm ovpn.zip
