@@ -13,6 +13,8 @@ i want a 'status' command to see if the vswitch is enabled or not (use ifconfig 
 make a 'panic' function to shut down all traffic on all ports/protocols/etc
 on the 'enable' command i need a failsafe to check that 'sudo ifconfig' is using 'tun0'
 need to make connect and disconnect useful
+    integrate the native openvpn commands (they also share variables for udp/tcp)
+        offer ipv4 & ipv6 support
 make function run as a command - still need autocomplete for arguments/options
 check the names of the "custom_hosts", "solus_hosts", etc when ive determined if debian needs a custom hosts
 still having issues with the dependencies check on the install script
