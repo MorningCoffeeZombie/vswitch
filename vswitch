@@ -120,6 +120,7 @@ fi
 if [ "$1" = "status" ]; then
 	printf "${BOLDFONT}Host:${NORMALFONT}		\t $VPNHOST \n"
 	printf "${BOLDFONT}Protocol:${NORMALFONT}	\t $PROTOCOL \n"
+	printf "${BOLDFONT}IP Version:${NORMALFONT}	\t IPv$IPVERSION \n"
 	printf "${BOLDFONT}Distro:${NORMALFONT}	\t $DISTRO \n"
 	printf "${BOLDFONT}Tunnel:${NORMALFONT}	\t $TUNNEL \n"
 	nmcli general status
