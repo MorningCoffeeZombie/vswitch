@@ -4,7 +4,7 @@
 # Set common variables
 DISTRO="solus"
 PROTOCOL="udp"
-VPNHOST="nord"
+VPNHOST="nordvpn"
 TUNNEL=tun0
 TODAYISO=`date '+%Y%m%d-%H%M'`
 
