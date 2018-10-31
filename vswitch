@@ -46,7 +46,7 @@ cd  /etc/openvpn
 			sudo eopkg install ca-certs
 		else
 			sudo apt-get install ca-certificates
-			sudo eopkg install ca-certs	
+			sudo apt-get install ca-certs	
 		fi
 		sudo unzip ovpn.zip
 		sudo rm ovpn.zip
