@@ -1,0 +1,14 @@
+#
+# do the wget and grep the iso code + server id. set them as a variable (dont save var to config file) 
+#
+
+if file does not exist then
+	cd  /etc/openvpn/ovpn_${PROTOCOL,,}
+	sudo wget https://downloads.nordcdn.com/configs/archives/servers/us653.nordvpn.com.$PROTOCOL.ovpn
+#
+# Need to change the us653 part to the variable of wget
+#
+fi
+
+# connect as sudo or user???
+	openvpn /etc/openvpn/ovpn_${PROTOCOL,,}/
