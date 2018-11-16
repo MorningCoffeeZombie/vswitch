@@ -140,36 +140,36 @@ fi
 #fi
 if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
 	nmcli networking off
-	sudo ufw default deny incoming
-	sudo ufw default deny outgoing
-	#nmcli networking connectivity
-	#nmcli general status
+	sudo ufw default deny incoming &>/dev/null
+	sudo ufw default deny outgoing &>/dev/null
+	#nmcli networking connectivity &>/dev/null
+	#nmcli general status &>/dev/null
 	echo "${BOLDFONT}PANIC MODE ENABLED${NORMALFONT}"
 fi
 if [[ "$1" = unpanic* ]]; then
-	sudo ufw reset
-	sudo ufw default deny incoming
-	sudo ufw default deny outgoing
-	sudo ufw allow out on tun0 from any to any
-	sudo ufw enable
-	nmcli networking on
+	sudo echo "y" | sudo ufw reset &>/dev/null
+	sudo ufw default deny incoming &>/dev/null
+	sudo ufw default deny outgoing &>/dev/null
+	sudo ufw allow out on tun0 from any to any &>/dev/null
+	sudo ufw enable &>/dev/null
+	nmcli networking on &>/dev/null
 	echo "VPN killswitch enabled"
 fi
 if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
-	sudo ufw reset
-	sudo ufw default deny incoming
-	sudo ufw default deny outgoing
-	sudo ufw allow out on tun0 from any to any
-	sudo ufw enable
+	sudo echo "y" | sudo ufw reset &>/dev/null
+	sudo ufw default deny incoming &>/dev/null
+	sudo ufw default deny outgoing &>/dev/null
+	sudo ufw allow out on tun0 from any to any &>/dev/null
+	sudo ufw enable &>/dev/null
 	echo "VPN killswitch enabled"
 fi
-if [ "$1" = "off*" ] || [ "$1" = "disengage*" ] || [ "$1" = "disable" ] ; then
+if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ] ; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
-	sudo ufw reset
-	sudo ufw default deny incoming
-	sudo ufw default allow outgoing
-	sudo ufw enable
+	sudo echo "y" | sudo ufw reset &>/dev/null
+	sudo ufw default deny incoming &>/dev/null
+	sudo ufw default allow outgoing &>/dev/null
+	sudo ufw enable &>/dev/null
 	echo "VPN killswitch disabled"
 fi
 

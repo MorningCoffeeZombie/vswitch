@@ -8,7 +8,7 @@
 
 
 
-
+fix errors with installing 'ufw'
 i want a 'status' command to see if the vswitch is enabled or not (use ifconfig to grep)
 make a 'panic' function to shut down all traffic on all ports/protocols/etc
 on the 'enable' command i need a failsafe to check that 'sudo ifconfig' is using 'tun0'

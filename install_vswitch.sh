@@ -25,7 +25,7 @@ done
 if [ $(uname -s) = *solus* ]; then
 	alias 'apt-get'=eopkg
 	DISTRO="solus"
-elif [ $(uname -a) = *ubuntu* ] ||  [ $(uname -a) = *mint* ] ||  [ $(uname -a) = *debian* ] || [ $(uname -a) = *pure* ] || [ $(uname -a) = *kali* ] || [ $(uname -a) = *parrot* ] || [ $(uname -a) = *tails* ]; then
+elif [[ $(uname -a) = *ubuntu* ]] ||  [[ $(uname -a) = *mint* ]] ||  [[ $(uname -a) = *debian* ]] || [[ $(uname -a) = *pure* ]] || [[ $(uname -a) = *kali* ]] || [[ $(uname -a) = *parrot* ]] || [[ $(uname -a) = *tails* ]]; then
         alias eopkg="apt-get"
 	DISTRO="debian"
 fi
@@ -41,13 +41,14 @@ fi
 
 # Saving known VPNs
 # Taken from:	https://nordvpn.com/tutorials/linux/openvpn/
+sudo mkdir /etc/openvpn
 cd  /etc/openvpn
-sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-sudo eopkg install ca-certificates
-sudo eopkg install ca-certs
 sudo unzip ovpn.zip
 sudo rm ovpn.zip
 cd ovpn_${PROTOCOL,,}	# Sets ovpn_ to declared variable in lower case
+sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
+sudo eopkg install ca-certificates
+sudo eopkg install ca-certs
 
 # Saving original host file as a .BAK with today's date in ISO format and then installing modified verson
 if [ $INSTALLHOSTS = "install" ]; then
