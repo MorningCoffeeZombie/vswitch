@@ -149,7 +149,7 @@ fi
 # CONNECT AND ENABLE
 ####################
 
-function enable_vswitch(){
+function fn_enable_vswitch(){
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
 	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null
@@ -182,10 +182,10 @@ if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
 fi
 if [[ "$1" = unpanic* ]]; then
 	ncmli networking on
-	enable_vswitch
+	fn_enable_vswitch
 fi
 if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
-	enable_vswitch
+	fn_enable_vswitch
 fi
 if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ] ; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
@@ -200,7 +200,7 @@ fi
 ###########
 # UNINSTALL
 ###########
-function uninstall_list(){
+function fn_uninstall_list(){
 	# List all files associated with this script. A unified place to list everything installed
 	sudo rm /usr/bin/vswitch
 	sudo rm /usr/share/man/man1/vswitch.1
@@ -213,7 +213,7 @@ if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
 	while true; do
 	    read -p "Remove vswitch? (y/n) " yn
 	    case $yn in
-	        [Yy]* ) uninstall_list; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch"; break;;
+	        [Yy]* ) fn_uninstall_list; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch"; break;;
 	        [Nn]* ) echo "vswitch will not be removed"; break;;
 	        * ) echo "Please answer yes or no.";;
 	    esac
