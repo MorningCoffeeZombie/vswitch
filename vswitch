@@ -2,8 +2,12 @@
 # GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
 source /etc/vswitch.conf
+# Text effects
 BOLDFONT=$(tput bold)
 NORMALFONT=$(tput sgr0)
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 
 # Command: vswitch
 
@@ -119,13 +123,20 @@ if [ "$1" = "ipversion" ] || [ "$1" = "ipv" ]; then
 		done
 	fi
 fi
-if [ "$1" = "status" ]; then
+if [[ "$1" = stat* ]]; then
 	printf "${BOLDFONT}Host:${NORMALFONT}		\t $VPNHOST \n"
 	printf "${BOLDFONT}Protocol:${NORMALFONT}	\t $PROTOCOL \n"
 	printf "${BOLDFONT}IP Version:${NORMALFONT}	\t IPv$IPVERSION \n"
 	printf "${BOLDFONT}Distro:${NORMALFONT}	\t $DISTRO \n"
 	printf "${BOLDFONT}Tunnel:${NORMALFONT}	\t $TUNNEL \n"
 	nmcli general status
+	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${BOLDFONT}VPN Required:${NORMALFONT}	\t ${GREEN}Yes${NC} \n"
+	fi
+	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${BOLDFONT}VPN Required:${NORMALFONT}	\t ${RED}NO${NC} \n"
+		printf "${RED}VSWITCH IS NOT ACTIVE${NC} \n"
+	fi
 fi
 	
 
