@@ -164,7 +164,12 @@ if [[ "$1" = unpanic* ]]; then
 	sudo ufw allow out on tun+ from any to any &>/dev/null
 	sudo ufw enable &>/dev/null
 	nmcli networking on &>/dev/null
-	echo "VPN killswitch enabled"
+	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
+	fi
+	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${GREEN}VPN killswitch enabled${NC} \n"
+	fi
 fi
 if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
@@ -174,7 +179,7 @@ if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
 	sudo ufw allow out on tun+ from any to any &>/dev/null
 	sudo ufw enable &>/dev/null
 	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
-		printf "${RED}VSWITCH COULD NOT CONNECT!${NC} \n"
+		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
 	fi
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
 		printf "${GREEN}VPN killswitch enabled${NC} \n"
