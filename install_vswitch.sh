@@ -5,7 +5,7 @@
 DISTRO="solus"
 PROTOCOL="udp"
 VPNHOST="nordvpn"
-TUNNEL=tun0
+TUNNEL=tun+
 TODAYISO=`date '+%Y%m%d-%H%M'`
 
 
@@ -32,12 +32,23 @@ fi
 
 # Check for dependencies, install if absent
 # Could also run:	 dpkg -s openvpn | grep -i "Status:"
-if [[ $(sudo eopkg check ufw) != Checking integrity of ufw*OK ]] || [[ $(dpkg -s ufw) = *not installed* ]]; then
-	sudo eopkg install ufw
-fi
-if [[ $(sudo eopkg check openvpn) != Checking integrity of openvpn*OK ]] || [[ $(dpkg -s openvpn) = *not installed* ]]; then
+if [[ DISTRO="solus" ]]; then
+	if [[ $(sudo eopkg check ufw) != *ufw*OK* ]]; then
+		sudo eopkg install ufw
+	fi
+	if [[ $(sudo eopkg check openvpn) != *openvpn*OK* ]]; then
         sudo eopkg install openvpn
+	fi
 fi
+if [[ DISTRO="debian" ]]; then
+	if [[ $(dpkg -s ufw) = *not*installed* ]]; then
+		sudo eopkg install ufw
+	fi
+	if [[ $(dpkg -s openvpn) = *not*installed* ]]; then
+        sudo eopkg install openvpn
+	fi
+fi
+
 
 # Saving known VPNs
 # Taken from:	https://nordvpn.com/tutorials/linux/openvpn/

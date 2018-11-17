@@ -15,7 +15,7 @@ function fn_check_conf(){
 		sudo echo "PROTOCOL=udp" | sudo tee --append /etc/vswitch.conf
 		sudo echo "VPNHOST=nordvpn" | sudo tee --append /etc/vswitch.conf
 		sudo echo "DISTRO=solus" | sudo tee --append /etc/vswitch.conf
-		sudo echo "TUNNEL=tun0" | sudo tee --append /etc/vswitch.conf
+		sudo echo "TUNNEL=tun+" | sudo tee --append /etc/vswitch.conf
 		sudo echo "IPVERSION=4" | sudo tee --append /etc/vswitch.conf
 		echo "New config file successfully created"
 	fi
@@ -150,7 +150,7 @@ if [[ "$1" = unpanic* ]]; then
 	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null
 	sudo ufw default deny outgoing &>/dev/null
-	sudo ufw allow out on tun0 from any to any &>/dev/null
+	sudo ufw allow out on tun+ from any to any &>/dev/null
 	sudo ufw enable &>/dev/null
 	nmcli networking on &>/dev/null
 	echo "VPN killswitch enabled"
@@ -160,7 +160,7 @@ if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
 	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null
 	sudo ufw default deny outgoing &>/dev/null
-	sudo ufw allow out on tun0 from any to any &>/dev/null
+	sudo ufw allow out on tun+ from any to any &>/dev/null
 	sudo ufw enable &>/dev/null
 	echo "VPN killswitch enabled"
 fi
