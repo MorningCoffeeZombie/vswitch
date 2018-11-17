@@ -200,7 +200,7 @@ fi
 # UNINSTALL
 ###########
 function uninstall_list(){
-	# List all files associated with this script
+	# List all files associated with this script. A unified place to list everything installed
 	sudo rm /usr/bin/vswitch
 	sudo rm /usr/share/man/man1/vswitch.1
 	sudo rm /etc/vswitch.conf
@@ -229,7 +229,7 @@ fi
 #################
 
 
-
+# Scripts and arguments:
 #echo $0 "has completed running"
 #echo $1
 #echo $2

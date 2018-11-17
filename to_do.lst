@@ -11,7 +11,8 @@ need to make connect and disconnect useful
 	integrate the native openvpn commands (they also share variables for udp/tcp)
 		offer ipv4 & ipv6 support
 make function run as a command - still need autocomplete for arguments/options
-
+for some reason you cannot connect to a vpn if 'vswitch on' was activated. need to allow connection during firewall or, at least, prioritize command properly
+should i offer to restore hosts file during uninstall?
 
 
 
@@ -25,7 +26,7 @@ on the 'enable' command i need a failsafe to check that 'sudo ifconfig' is using
 
 
 
-# Notes
+# NOTES
 #######
 https://security.stackexchange.com/questions/183177/openvpn-kill-switch-on-linux
 https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
@@ -35,6 +36,8 @@ https://nordvpn.com/tutorials/linux/openvpn/
 I could use an alias to mean something like: ./startkillswitch.sh
 	id have to make the alias permanent
 	or i could make an actual linux command/service
+	
+ufw Uses "+" as a wildcard instead of "*". This is why the script defaults to "tun+"
 
 
 
