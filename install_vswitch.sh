@@ -7,6 +7,7 @@ PROTOCOL="udp"
 VPNHOST="nordvpn"
 TUNNEL=tun+
 TODAYISO=`date '+%Y%m%d-%H%M'`
+INSTALLDIR=$(pwd)
 
 
 # Questionaire: offer a more secure hosts file
@@ -63,15 +64,16 @@ sudo eopkg install ca-certs
 
 # Saving original host file as a .BAK with today's date in ISO format and then installing modified verson
 if [ $INSTALLHOSTS = "install" ]; then
+	cd $INSTALLDIR
 	sudo cp /etc/hosts /etc/hosts.BAK$TODAYISO
-	if [ -f /etc/hosts.BAK$TODAYISO ]l then
-		if [ $DISTRO = "solus" ]; then
+#	if [ -f /etc/hosts.BAK$TODAYISO ]l then
+#		if [ $DISTRO = "solus" ]; then
+#			sudo cp custom_hosts /etc/hosts
+#		elif [ $DISTRO = "debian" ]; then
 			sudo cp custom_hosts /etc/hosts
-		elif [ $DISTRO = "debian" ]; then
-			sudo cp custom_hosts /etc/hosts
-		fi
+#		fi
 		echo "Your /etc/hosts file has been backed up and replaced"
-	fi
+#	fi
 fi
 
 # Install shell commands and man page
