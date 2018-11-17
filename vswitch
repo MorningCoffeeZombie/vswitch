@@ -2,6 +2,7 @@
 # GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
 source /etc/vswitch.conf
+source /etc/bash_completion.d/vswitch
 # Text effects
 BOLDFONT=$(tput bold)
 NORMALFONT=$(tput sgr0)
@@ -206,6 +207,7 @@ function fn_uninstall_list(){
 	sudo rm /usr/bin/vswitch
 	sudo rm /usr/share/man/man1/vswitch.1
 	sudo rm /etc/vswitch.conf
+	sudo rm /etc/bash_completion.d/vswitch
 }
 
 if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then

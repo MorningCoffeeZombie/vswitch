@@ -82,6 +82,8 @@ sudo chmod +x /usr/bin/vswitch
 sudo cp vswitch.conf /etc/vswitch.conf
 sudo chmod +r /etc/vswitch.conf
 sudo cp vswitch.1 /usr/share/man/man1/
+sudo cp vswitch_autocomplete.sh /etc/bash_completion.d/vswitch
+sudo chmod +r /etc/bash_completion.d/vswitch
 
 # Adding call for custom functions to ~/.bashrc
 #sudo echo "# Added by \"LinuxVPNKillswitch\": ">>/etc/skel/.bashrc
