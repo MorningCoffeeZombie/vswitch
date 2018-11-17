@@ -33,18 +33,18 @@ fi
 # Check for dependencies, install if absent
 # Could also run:	 dpkg -s openvpn | grep -i "Status:"
 if [[ DISTRO="solus" ]]; then
-	if [[ $(sudo eopkg check ufw) != *ufw*OK* ]]; then
+	if [[ $(sudo eopkg check ufw) != *ufw*OK* ]] &>/dev/null; then
 		sudo eopkg install ufw
 	fi
-	if [[ $(sudo eopkg check openvpn) != *openvpn*OK* ]]; then
+	if [[ $(sudo eopkg check openvpn) != *openvpn*OK* ]] &>/dev/null; then
         sudo eopkg install openvpn
 	fi
 fi
 if [[ DISTRO="debian" ]]; then
-	if [[ $(dpkg -s ufw) = *not*installed* ]]; then
+	if [[ $(dpkg -s ufw) = *not*installed* ]] &>/dev/null; then
 		sudo eopkg install ufw
 	fi
-	if [[ $(dpkg -s openvpn) = *not*installed* ]]; then
+	if [[ $(dpkg -s openvpn) = *not*installed* ]] &>/dev/null; then
         sudo eopkg install openvpn
 	fi
 fi
