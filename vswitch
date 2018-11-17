@@ -173,7 +173,12 @@ if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
 	sudo ufw default deny outgoing &>/dev/null
 	sudo ufw allow out on tun+ from any to any &>/dev/null
 	sudo ufw enable &>/dev/null
-	echo "VPN killswitch enabled"
+	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${RED}VSWITCH COULD NOT CONNECT!${NC} \n"
+	fi
+	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${GREEN}VPN killswitch enabled${NC} \n"
+	fi
 fi
 if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ] ; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
