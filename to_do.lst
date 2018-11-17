@@ -7,6 +7,7 @@
 ############
 
 
+allow user to save their $VPNUSERNAME if they so wish (need to provide user notice that this may be a security risk)
 need to make connect and disconnect useful
 	integrate the native openvpn commands (they also share variables for udp/tcp)
 		offer ipv4 & ipv6 support
