@@ -138,11 +138,33 @@ if [[ "$1" = stat* ]]; then
 		printf "${RED}VSWITCH IS NOT ACTIVE${NC} \n"
 	fi
 fi
+if [[ "$1" = ip ]] || [[ "$1" = who* ]]; then
+		NEWIP=`curl icanhazip.com`
+		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC} \n" 
+fi
 	
 
 ####################
 # CONNECT AND ENABLE
 ####################
+
+function enable_vswitch(){
+	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
+	sudo echo "y" | sudo ufw reset &>/dev/null
+	sudo ufw default deny incoming &>/dev/null
+	sudo ufw default deny outgoing &>/dev/null
+	sudo ufw allow out on tun+ from any to any &>/dev/null
+	sudo ufw enable &>/dev/null
+	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
+	fi
+	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
+		NEWIP=`curl icanhazip.com`
+		printf "VPN killswitch	\t ${GREEN}ENABLED${NC} \n"
+		printf "Your new IP is	\t ${GREEN}${NEWIP}${NC} \n" 
+	fi
+}
+
 #if [[ "$1" = connect* ]]; then
 #		
 #fi
@@ -158,32 +180,11 @@ if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
 	echo "${BOLDFONT}PANIC MODE ENABLED${NORMALFONT}"
 fi
 if [[ "$1" = unpanic* ]]; then
-	sudo echo "y" | sudo ufw reset &>/dev/null
-	sudo ufw default deny incoming &>/dev/null
-	sudo ufw default deny outgoing &>/dev/null
-	sudo ufw allow out on tun+ from any to any &>/dev/null
-	sudo ufw enable &>/dev/null
-	nmcli networking on &>/dev/null
-	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
-		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
-	fi
-	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
-		printf "${GREEN}VPN killswitch enabled${NC} \n"
-	fi
+	ncmli networking on
+	enable_vswitch
 fi
 if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
-	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
-	sudo echo "y" | sudo ufw reset &>/dev/null
-	sudo ufw default deny incoming &>/dev/null
-	sudo ufw default deny outgoing &>/dev/null
-	sudo ufw allow out on tun+ from any to any &>/dev/null
-	sudo ufw enable &>/dev/null
-	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
-		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
-	fi
-	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
-		printf "${GREEN}VPN killswitch enabled${NC} \n"
-	fi
+	enable_vswitch
 fi
 if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ] ; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
@@ -191,7 +192,7 @@ if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ] ; then
 	sudo ufw default deny incoming &>/dev/null
 	sudo ufw default allow outgoing &>/dev/null
 	sudo ufw enable &>/dev/null
-	echo "VPN killswitch disabled"
+	printf "VPN killswitch	\t ${RED}DISABLED${NC} \n"
 fi
 
 
