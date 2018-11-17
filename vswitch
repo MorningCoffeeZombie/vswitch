@@ -126,6 +126,7 @@ if [ "$1" = "ipversion" ] || [ "$1" = "ipv" ]; then
 fi
 if [[ "$1" = stat* ]]; then
 	printf "${BOLDFONT}Host:${NORMALFONT}		\t $VPNHOST \n"
+	printf "${BOLDFONT}VPN Username:${NORMALFONT}		\t $VPNUSERNAME \n"
 	printf "${BOLDFONT}Protocol:${NORMALFONT}	\t $PROTOCOL \n"
 	printf "${BOLDFONT}IP Version:${NORMALFONT}	\t IPv$IPVERSION \n"
 	printf "${BOLDFONT}Distro:${NORMALFONT}	\t $DISTRO \n"

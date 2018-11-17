@@ -9,7 +9,7 @@
 	\fBvswitch [options] [arguments]\fR
 .
 .SH "DESCRIPTION"
- 	\fBvswitch\fR is a lightweight manager for, VPN provider specific, OpenVPN connection settings. \fBvswitch\fR, when enabled, blocks all outgoing un-tunneled communications. Default tunnel is tun0.
+ 	\fBvswitch\fR is a lightweight manager for, VPN provider specific, OpenVPN connection settings. \fBvswitch\fR, when enabled, blocks all outgoing un-tunneled communications. Default tunnel is tun0. The state of \fBvswitch\fR's firewall is persistent through reboot - you will need to run \fBvswitch off\fR each time you wish to deactivate the killswitch regardless of system shutdowns.
 
 
 .SH "OPTIONS"
@@ -23,11 +23,11 @@ Display this man page
 .TP
 \fBhost\fR [argument]
 .IP "" 4
-(\fBipv\fR) Change the version of internet protocols used to connect (\fB4\fR or \fB6\fR). Defaults to \fBIPv4\fR
+Change your VPN host/provider. Defaults to \fBnordvpn\fR
 .TP
 \fBipversion\fR [argument]
 .IP "" 4
-Change your VPN host/provider. Defaults to \fBnord\fR
+(\fBipv\fR) Change the version of internet protocols used to connect (\fB4\fR or \fB6\fR). Defaults to \fBIPv4\fR
 .TP
 \fBon\fR
 .IP "" 4
