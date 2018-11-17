@@ -18,6 +18,7 @@ function fn_check_conf(){
 		echo "Config file could not be found, creating a new one"
 		sudo echo "PROTOCOL=udp" | sudo tee --append /etc/vswitch.conf
 		sudo echo "VPNHOST=nordvpn" | sudo tee --append /etc/vswitch.conf
+		sudo echo "VPNUSERNAME=" | sudo tee --append /etc/vswitch.conf
 		sudo echo "DISTRO=solus" | sudo tee --append /etc/vswitch.conf
 		sudo echo "TUNNEL=tun+" | sudo tee --append /etc/vswitch.conf
 		sudo echo "IPVERSION=4" | sudo tee --append /etc/vswitch.conf
