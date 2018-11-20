@@ -223,13 +223,14 @@ function fn_recommend_server(){
 	# Need something here
 	servers=$(curl --silent https://nordvpn.com/api/server/stats)
 	capacity="30"
-	limit="20"
+
 
 	# Declare and populate array
 	declare -A results
 	while IFS="=" read -r key value
 	do
 	results[$key]="$value"
+	BESTSERVER=$key
 	done < <(jq --compact-output -r --arg location "$REGIONPREF" --arg capacity "$capacity" --arg limit "$limit" \
 	'[. |
 	to_entries[] |
@@ -256,13 +257,14 @@ function fn_recommend_server(){
 }
 
 if [[ "$1" = rec* ]]; then
+	limit="20"
 	fn_recommend_server
-
 fi
-#if [[ "$1" = con* ]]; then
-#	fn_recommend_server
+if [[ "$1" = con* ]]; then
+	limit="1"
+	fn_recommend_server
 #	sudo openvpn --config $BESTSERVER
-#fi
+fi
 if [[ "$1" = discon* ]]; then
 	sudo killall openvpn
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
