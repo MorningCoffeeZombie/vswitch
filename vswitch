@@ -246,6 +246,7 @@ function fn_recommend_server(){
 	if [ ${#results[@]} -eq 0 ]; then
 		>&2 echo "$(tput setaf 1)No servers found :("
 	else
+		printf "${BOLDFONT}SERVER \t\t      POPULATION${NORMALFONT}\n"
 		for key in "${!results[@]}"
 		do
 			echo -e "$(tput setaf 6 && tput bold)$key $(tput sgr0) ${results[$key]}%"
@@ -254,6 +255,10 @@ function fn_recommend_server(){
 	fi
 }
 
+if [[ "$1" = rec* ]]; then
+	fn_recommend_server
+
+fi
 #if [[ "$1" = con* ]]; then
 #	fn_recommend_server
 #	sudo openvpn --config $BESTSERVER
