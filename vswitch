@@ -1,4 +1,6 @@
 #!/bin/bash
+# Created by https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git
+# aka "RMJ"
 # GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
 source /etc/vswitch.conf
@@ -128,6 +130,7 @@ if [ "$1" = "ipversion" ] || [ "$1" = "ipv" ]; then
 		done
 	fi
 fi
+
 # List forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
 ar_2_digit_iso=(
   'ad' 'ae' 'af' 'ag' 'ai' 'al' 'am' 'ao' 'aq' 'ar' 'as' 'at' 'au' 'aw' 'ax'
@@ -157,6 +160,7 @@ function fn_check_iso_region(){
 		echo "$REGIONPREF is not a valid region and/or not supported by NordVPN at this time"
 	fi
 }
+
 if [ "$1" = "location" ] || [ "$1" = "region" ]; then
 	if [[ "$2" != "" ]]; then
 		REGIONPREF=$2
@@ -212,13 +216,25 @@ function fn_enable_vswitch(){
 		printf "Your new IP is	\t ${GREEN}${NEWIP}${NC} \n" 
 	fi
 }
+function fn_recommend_server(){
+	# Need something here
+	echo 
+}
 
 #if [[ "$1" = connect* ]]; then
-#		
+#		sudo openvpn --config $SERVERHERE
 #fi
-#if [[ "$1" = disconnect* ]]; then
-#		
-#fi
+if [[ "$1" = disconnect* ]]; then
+	sudo killall openvpn
+	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${GREEN}VSWITCH IS STILL ACTIVE${NC} \n"
+		printf "Use ${BOLDFONT}vswitch off${NORMALFONT} to renable untunneled connections. \n"
+	fi
+	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${BOLDFONT}VPN Required:${NORMALFONT}	\t ${RED}NO${NC} \n"
+		printf "${RED}VSWITCH IS NOT ACTIVE${NC} \n"
+	fi
+fi
 if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
 	nmcli networking off
 	sudo ufw default deny incoming &>/dev/null
