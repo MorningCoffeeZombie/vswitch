@@ -152,8 +152,7 @@ ar_2_digit_iso=(
   'vi' 'vn' 'vu' 'wf' 'ws' 'ye' 'yt' 'za' 'zm' 'zw'
 )
 function fn_check_iso_region(){
-	if [[ " ${ar_2_digit_iso[*]} " == *"$REGIONPREF"* ]];
-	then
+	if [[ " ${ar_2_digit_iso[*]} " == *"$REGIONPREF"* ]]; then
 		echo "Entered: $REGIONPREF"
 		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/vswitch.conf
 	else
@@ -166,6 +165,9 @@ if [ "$1" = "location" ] || [ "$1" = "region" ]; then
 		REGIONPREF=$2
 		fn_check_conf
 		fn_check_iso_region
+	elif  [[ "$2" != *lear* ]]; then
+		REGIONPREF=""
+		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/vswitch.conf
 	else
 		echo "Enter a 2-digit ISO country code to set as preference: "
 		read REGIONPREF
@@ -217,14 +219,46 @@ function fn_enable_vswitch(){
 	fi
 }
 function fn_recommend_server(){
+# Forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
 	# Need something here
-	echo 
+	servers=$(curl --silent https://nordvpn.com/api/server/stats)
+	capacity="30"
+	limit="20"
+
+	# Declare and populate array
+	declare -A results
+	while IFS="=" read -r key value
+	do
+	results[$key]="$value"
+	done < <(jq --compact-output -r --arg location "$REGIONPREF" --arg capacity "$capacity" --arg limit "$limit" \
+	'[. |
+	to_entries[] |
+	{key: .key, value: .value.percent} |
+	select(.value <= ($capacity|tonumber)) |
+	select(.key|contains($location))] |
+	sort_by(.value) |
+	from_entries |
+	to_entries |
+	map("\(.key)=\(.value|tostring)") |
+	limit(($limit|tonumber);.[])' <<<"$servers")
+
+	# Print out results
+	if [ ${#results[@]} -eq 0 ]; then
+		>&2 echo "$(tput setaf 1)No servers found :("
+	else
+		for key in "${!results[@]}"
+		do
+			echo -e "$(tput setaf 6 && tput bold)$key $(tput sgr0) ${results[$key]}%"
+	done |
+		awk '{print $NF,$0}' | sort -n | cut -f2- -d' ' | column -t
+	fi
 }
 
-#if [[ "$1" = connect* ]]; then
-#		sudo openvpn --config $SERVERHERE
+#if [[ "$1" = con* ]]; then
+#	fn_recommend_server
+#	sudo openvpn --config $BESTSERVER
 #fi
-if [[ "$1" = disconnect* ]]; then
+if [[ "$1" = discon* ]]; then
 	sudo killall openvpn
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
 		printf "${GREEN}VSWITCH IS STILL ACTIVE${NC} \n"
