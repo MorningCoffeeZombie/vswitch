@@ -17,12 +17,15 @@ NC='\033[0m' # No Color
 function fn_check_conf(){
 	if [ ! -f "/etc/vswitch.conf" ]; then
 		echo "Config file could not be found, creating a new one"
+		sudo cat > /etc/vswitch.conf
 		sudo echo "PROTOCOL=udp" | sudo tee --append /etc/vswitch.conf
+		sudo echo "REGIONPREF=us" | sudo tee --append /etc/vswitch.conf
 		sudo echo "VPNHOST=nordvpn" | sudo tee --append /etc/vswitch.conf
 		sudo echo "VPNUSERNAME=" | sudo tee --append /etc/vswitch.conf
 		sudo echo "DISTRO=solus" | sudo tee --append /etc/vswitch.conf
 		sudo echo "TUNNEL=tun+" | sudo tee --append /etc/vswitch.conf
 		sudo echo "IPVERSION=4" | sudo tee --append /etc/vswitch.conf
+		sudo chomd 777 /etc/vswitch.conf
 		echo "New config file successfully created"
 	fi
 }
@@ -125,9 +128,51 @@ if [ "$1" = "ipversion" ] || [ "$1" = "ipv" ]; then
 		done
 	fi
 fi
+# List forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
+ar_2_digit_iso=(
+  'ad' 'ae' 'af' 'ag' 'ai' 'al' 'am' 'ao' 'aq' 'ar' 'as' 'at' 'au' 'aw' 'ax'
+  'az' 'ba' 'bb' 'bd' 'be' 'bf' 'bg' 'bh' 'bi' 'bj' 'bl' 'bm' 'bn' 'bo' 'bq'
+  'br' 'bs' 'bt' 'bv' 'bw' 'by' 'bz' 'ca' 'cc' 'cd' 'cf' 'cg' 'ch' 'ci' 'ck'
+  'cl' 'cm' 'cn' 'co' 'cr' 'cu' 'cv' 'cw' 'cx' 'cy' 'cz' 'de' 'dj' 'dk' 'dm'
+  'do' 'dz' 'ec' 'ee' 'eg' 'eh' 'er' 'es' 'et' 'fi' 'fj' 'fk' 'fm' 'fo' 'fr'
+  'ga' 'gb' 'gd' 'ge' 'gf' 'gg' 'gh' 'gi' 'gl' 'gm' 'gn' 'gp' 'gq' 'gr' 'gs'
+  'gt' 'gu' 'gw' 'gy' 'hk' 'hm' 'hn' 'hr' 'ht' 'hu' 'id' 'ie' 'il' 'im' 'in'
+  'io' 'iq' 'ir' 'is' 'it' 'je' 'jm' 'jo' 'jp' 'ke' 'kg' 'kh' 'ki' 'km' 'kn'
+  'kp' 'kr' 'kw' 'ky' 'kz' 'la' 'lb' 'lc' 'li' 'lk' 'lr' 'ls' 'lt' 'lu' 'lv'
+  'ly' 'ma' 'mc' 'md' 'me' 'mf' 'mg' 'mh' 'mk' 'ml' 'mm' 'mn' 'mo' 'mp' 'mq'
+  'mr' 'ms' 'mt' 'mu' 'mv' 'mw' 'mx' 'my' 'mz' 'na' 'nc' 'ne' 'nf' 'ng' 'ni'
+  'nl' 'no' 'np' 'nr' 'nu' 'nz' 'om' 'pa' 'pe' 'pf' 'pg' 'ph' 'pk' 'pl' 'pm'
+  'pn' 'pr' 'ps' 'pt' 'pw' 'py' 'qa' 're' 'ro' 'rs' 'ru' 'rw' 'sa' 'sb' 'sc'
+  'sd' 'se' 'sg' 'sh' 'si' 'sj' 'sk' 'sl' 'sm' 'sn' 'so' 'sr' 'ss' 'st' 'sv'
+  'sx' 'sy' 'sz' 'tc' 'td' 'tf' 'tg' 'th' 'tj' 'tk' 'tl' 'tm' 'tn' 'to' 'tr'
+  'tt' 'tv' 'tw' 'tz' 'ua' 'ug' 'uk' 'um' 'us' 'uy' 'uz' 'va' 'vc' 've' 'vg'
+  'vi' 'vn' 'vu' 'wf' 'ws' 'ye' 'yt' 'za' 'zm' 'zw'
+)
+function fn_check_iso_region(){
+	if [[ " ${ar_2_digit_iso[*]} " == *"$REGIONPREF"* ]];
+	then
+		echo "Entered: $REGIONPREF"
+		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/vswitch.conf
+	else
+		echo "$REGIONPREF is not a valid region and/or not supported by NordVPN at this time"
+	fi
+}
+if [ "$1" = "location" ] || [ "$1" = "region" ]; then
+	if [[ "$2" != "" ]]; then
+		REGIONPREF=$2
+		fn_check_conf
+		fn_check_iso_region
+	else
+		echo "Enter a 2-digit ISO country code to set as preference: "
+		read REGIONPREF
+		fn_check_conf
+		fn_check_iso_region
+	fi
+fi
 if [[ "$1" = stat* ]]; then
 	printf "${BOLDFONT}Host:${NORMALFONT}		$VPNHOST \n"
 	printf "${BOLDFONT}VPN Username:${NORMALFONT}		$VPNUSERNAME \n"
+	printf "${BOLDFONT}Region Pref:${NORMALFONT}	$REGIONPREF \n"
 	printf "${BOLDFONT}Protocol:${NORMALFONT}	$PROTOCOL \n"
 	printf "${BOLDFONT}IP Version:${NORMALFONT}	IPv$IPVERSION \n"
 	printf "${BOLDFONT}Distro:${NORMALFONT}	\t$DISTRO \n"
@@ -238,6 +283,8 @@ fi
 #echo $1
 #echo $2
 
+# Echo the contents of the ISO array:
+#echo "${ar_2_digit_iso[*]}"
 
 
 
