@@ -64,17 +64,25 @@ fi
 if [[ DISTRO="debian" ]]; then
 	sudo apt-get install ca-certificates
 	sudo apt-get install ca-certs
-	if [[ $(dpkg -s ufw) = *not*installed* ]] &>/dev/null; then
+	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null; then
 		sudo eopkg install ufw -y
 		sudo apt-get install ufw -y
 	fi
-	if [[ $(dpkg -s openvpn) = *not*installed* ]] &>/dev/null; then
-        sudo eopkg install openvpn -y
-        sudo apt-get install openvpn -y
+	if [[ $(dpkg -s openvpn | grep -i status) = *not*installed* ]] &>/dev/null; then
+		sudo eopkg install openvpn -y
+		sudo apt-get install openvpn -y
+	fi
+	if [[ $(dpkg -s network-manager-openvpn | grep -i status) = *not*installed* ]] &>/dev/null; then
+		sudo eopkg install network-manager-openvpn -y
+		sudo apt-get install network-manager-openvpn -y
+	fi
+	if [[ $(dpkg -s network-manager-openvpn-gnome | grep -i status) = *not*installed* ]] &>/dev/null; then
+		sudo eopkg install network-manager-openvpn-gnome -y
+		sudo apt-get install network-manager-openvpn-gnome -y
 	fi
 	if [[ $(dpkg -s jq) = *not*installed* ]] &>/dev/null; then
-        sudo eopkg install jq -y
-        sudo apt-get install jq -y
+		sudo eopkg install jq -y
+		sudo apt-get install jq -y
 	fi
 fi
 
@@ -83,10 +91,10 @@ fi
 # Taken from:	https://nordvpn.com/tutorials/linux/openvpn/
 sudo mkdir /etc/openvpn/${VPNHOST,,}
 cd  /etc/openvpn/${VPNHOST,,}
-sudo unzip ovpn.zip
-sudo rm ovpn.zip
-cd ovpn_${PROTOCOL,,}	# Sets ovpn_ to declared variable in lower case
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
+sudo unzip /etc/openvpn/${VPNHOST,,}/ovpn.zip
+sudo rm /etc/openvpn/${VPNHOST,,}/ovpn.zip
+cd /etc/openvpn/${VPNHOST,,}ovpn_${PROTOCOL,,}	# Sets cd ovpn_ to declared variable in lower case
 
 # Saving original host file as a .BAK with today's date in ISO format and then installing modified verson
 if [ $INSTALLHOSTS = "install" ]; then

@@ -335,6 +335,7 @@ if [[ "$1" = discon* ]]; then
 fi
 if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
 	nmcli networking off
+	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null
 	sudo ufw default deny outgoing &>/dev/null
 	#nmcli networking connectivity &>/dev/null
