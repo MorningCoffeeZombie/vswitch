@@ -34,19 +34,35 @@ fi
 # Check for dependencies, install if absent
 # Could also run:	 dpkg -s openvpn | grep -i "Status:"
 if [[ DISTRO="solus" ]]; then
-	if [[ $(sudo eopkg check ufw) != *ufw*OK* ]] &>/dev/null; then
+	sudo eopkg install ca-certificates
+	sudo eopkg install ca-certs
+	if [[ $(sudo eopkg check ufw) != *integrity*of*ufw*OK* ]] &>/dev/null; then
 		sudo eopkg install ufw
+		sudo apt-get install ufw
 	fi
-	if [[ $(sudo eopkg check openvpn) != *openvpn*OK* ]] &>/dev/null; then
+	if [[ $(sudo eopkg check openvpn) != *integrity*of*openvpn*OK* ]] &>/dev/null; then
         sudo eopkg install openvpn
+        sudo apt-get install openvpn
+	fi
+	if [[ $(sudo eopkg check jq) != *integrity*of*jq*OK* ]] &>/dev/null; then
+        sudo eopkg install jq
+        sudo apt-get install jq
 	fi
 fi
 if [[ DISTRO="debian" ]]; then
+	sudo apt-get install ca-certificates
+	sudo apt-get install ca-certs
 	if [[ $(dpkg -s ufw) = *not*installed* ]] &>/dev/null; then
 		sudo eopkg install ufw
+		sudo apt-get install ufw
 	fi
 	if [[ $(dpkg -s openvpn) = *not*installed* ]] &>/dev/null; then
         sudo eopkg install openvpn
+        sudo apt-get install openvpn
+	fi
+	if [[ $(dpkg -s jq) = *not*installed* ]] &>/dev/null; then
+        sudo eopkg install jq
+        sudo apt-get install jq
 	fi
 fi
 
@@ -59,8 +75,8 @@ sudo unzip ovpn.zip
 sudo rm ovpn.zip
 cd ovpn_${PROTOCOL,,}	# Sets ovpn_ to declared variable in lower case
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-sudo eopkg install ca-certificates
-sudo eopkg install ca-certs
+
+
 
 # Saving original host file as a .BAK with today's date in ISO format and then installing modified verson
 if [ $INSTALLHOSTS = "install" ]; then

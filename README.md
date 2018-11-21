@@ -1,8 +1,9 @@
 ![VPN](http://ais.its.psu.edu/files/2015/06/vpn-logo.png)
 
 # Dependencies
-ufw # Used for network management  
-openvpn # Connects to VPN hosts/servers  
+ufw	# Used for network management  
+openvpn	# Connects to VPN hosts/servers  
+jq	# Simple json reader for Linux  
 
 # Compatibility
 Linux: Solus OS  
