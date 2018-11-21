@@ -313,7 +313,8 @@ fi
 if [[ "$1" = con* ]]; then
 	limit="1"
 	fn_recommend_server
-# Apparently nohup doesnt get along with with sudo and/or openvpn, using "&" instead
+# Apparently nohup doesnt get along with with sudo and/or openvpn, can't use "&" because it messses with entering credentials
+# the below listed openvpn commands work with Debian but not with Solus
 #	if [ "$VPNHOST" = "nordvpn" ]; then
 #		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
 #		sudo openvpn /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
