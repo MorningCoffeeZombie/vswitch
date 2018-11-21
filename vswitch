@@ -344,8 +344,9 @@ if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
 	echo "${BOLDFONT}PANIC MODE ENABLED${NORMALFONT}"
 fi
 if [[ "$1" = unpanic* ]]; then
-	ncmli networking on
+	nmcli networking on
 	fn_enable_vswitch
+	echo "${BOLDFONT}PANIC MODE DISABLED${NORMALFONT}"
 fi
 if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ]; then
 	fn_enable_vswitch
