@@ -56,6 +56,10 @@ if [[ DISTRO="solus" ]]; then
 		sudo eopkg install openvpn -y
 		sudo apt-get install openvpn -y
 	fi
+	if [[ $(sudo eopkg check networkmanager-openvpn) != *integrity*of*networkmanager-openvpn*OK* ]] &>/dev/null; then
+		sudo eopkg install networkmanager-openvpn -y
+		sudo apt-get install jqnetworkmanager-openvpn -y
+	fi
 	if [[ $(sudo eopkg check jq) != *integrity*of*jq*OK* ]] &>/dev/null; then
 		sudo eopkg install jq -y
 		sudo apt-get install jq -y

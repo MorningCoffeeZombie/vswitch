@@ -1,9 +1,14 @@
 ![VPN](logo.png)
 
 # Dependencies
+**Dependencies will be installed during installation if missing**
 ufw	# Used for network management  
 openvpn	# Connects to VPN hosts/servers  
 jq	# Simple json reader for Linux  
+networkmanager-openvpn	# Improved integration of OpenVPN
+network-manager-openvpn	# Required for Debian based systems  
+network-manager-openvpn-gnome	# Required for Debian based systems  
+
 
 # Compatibility
 Linux: Solus OS  
