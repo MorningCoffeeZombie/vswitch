@@ -1,4 +1,4 @@
-![VPN](logo.png)
+![VPN](Resources/logo.png)
 
 # Dependencies
 **Dependencies will be installed during installation if missing**

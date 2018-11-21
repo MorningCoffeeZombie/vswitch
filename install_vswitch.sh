@@ -108,7 +108,7 @@ if [ $INSTALLHOSTS = "install" ]; then
 #		if [ $DISTRO = "solus" ]; then
 #			sudo cp custom_hosts /etc/hosts
 #		elif [ $DISTRO = "debian" ]; then
-			sudo cp custom_hosts /etc/hosts
+			sudo cp Resources/custom_hosts /etc/hosts
 #		fi
 		echo "Your /etc/hosts file has been backed up and replaced"
 #	fi
@@ -118,10 +118,10 @@ fi
 cd $INSTALLDIR
 sudo cp vswitch /usr/bin/vswitch
 sudo chmod +x /usr/bin/vswitch
-sudo cp vswitch.conf /etc/openvpn/vswitch.conf
+sudo cp Resources/vswitch.conf /etc/openvpn/vswitch.conf
 sudo chmod +r /etc/openvpn/vswitch.conf
-sudo cp vswitch.1 /usr/share/man/man1/
-sudo cp vswitch_autocomplete.sh /etc/bash_completion.d/vswitch
+sudo cp Resources/vswitch.1 /usr/share/man/man1/
+sudo cp Resources/vswitch_autocomplete.sh /etc/bash_completion.d/vswitch
 sudo chmod +rx /etc/bash_completion.d/vswitch
 source /etc/bash_completion.d/vswitch
 
