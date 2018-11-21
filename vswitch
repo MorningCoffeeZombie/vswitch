@@ -3,7 +3,7 @@
 # aka "RMJ"
 # GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
-source /etc/vswitch.conf
+source /etc/openvpn/vswitch.conf
 source /etc/bash_completion.d/vswitch
 # Text effects
 BOLDFONT=$(tput bold)
@@ -18,19 +18,19 @@ NC='\033[0m' # No Color
 ####################
 # FUNCTIONS & ARRAYS
 ####################
-# Confirm the /etc/vswitch.conf file is present
+# Confirm the /etc/openvpn/vswitch.conf file is present
 function fn_check_conf(){
-	if [ ! -f "/etc/vswitch.conf" ]; then
+	if [ ! -f "/etc/openvpn/vswitch.conf" ]; then
 		echo "Config file could not be found, creating a new one"
-		sudo echo> /etc/vswitch.conf
-		sudo printf "PROTOCOL=udp\n" | sudo tee --append /etc/vswitch.conf
-		sudo printf "REGIONPREF=us\n" | sudo tee --append /etc/vswitch.conf
-		sudo printf "VPNHOST=nordvpn\n" | sudo tee --append /etc/vswitch.conf
-		sudo printf "VPNUSERNAME=\n" | sudo tee --append /etc/vswitch.conf
-		sudo printf "DISTRO=solus\n" | sudo tee --append /etc/vswitch.conf
-		sudo printf "TUNNEL=tun+\n" | sudo tee --append /etc/vswitch.conf
-		sudo printf "IPVERSION=4\n" | sudo tee --append /etc/vswitch.conf
-		sudo chmod 777 /etc/vswitch.conf
+		sudo echo> /etc/openvpn/vswitch.conf
+		sudo printf "PROTOCOL=udp\n" | sudo tee --append /etc/openvpn/vswitch.conf
+		sudo printf "REGIONPREF=us\n" | sudo tee --append /etc/openvpn/vswitch.conf
+		sudo printf "VPNHOST=nordvpn\n" | sudo tee --append /etc/openvpn/vswitch.conf
+		sudo printf "VPNUSERNAME=\n" | sudo tee --append /etc/openvpn/vswitch.conf
+		sudo printf "DISTRO=solus\n" | sudo tee --append /etc/openvpn/vswitch.conf
+		sudo printf "TUNNEL=tun+\n" | sudo tee --append /etc/openvpn/vswitch.conf
+		sudo printf "IPVERSION=4\n" | sudo tee --append /etc/openvpn/vswitch.conf
+		sudo chmod 777 /etc/openvpn/vswitch.conf
 		echo "New config file successfully created"
 	fi
 }
@@ -72,7 +72,7 @@ ar_2_digit_iso=(
 function fn_check_iso_region(){
 	if [[ " ${ar_2_digit_iso[*]} " == *"$REGIONPREF"* ]]; then
 		echo "Entered: $REGIONPREF"
-		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/vswitch.conf
+		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/openvpn/vswitch.conf
 	else
 		echo "$REGIONPREF is not a valid region and/or not supported by NordVPN at this time"
 	fi
@@ -99,7 +99,7 @@ function fn_uninstall_list(){
 	# List all files associated with this script. A unified place to list everything installed
 	sudo rm /usr/bin/vswitch
 	sudo rm /usr/share/man/man1/vswitch.1
-	sudo rm /etc/vswitch.conf
+	sudo rm /etc/openvpn/vswitch.conf
 	sudo rm /etc/bash_completion.d/vswitch
 }
 
@@ -161,9 +161,9 @@ if [[ "$1" = host* ]]; then
 		do
 		case $provider in
 			"NordVPN")
-				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; echo "$provider entered"; break;;
+				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; echo "$provider entered"; break;;
 			"Public")
-				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; printf "$provider entered. ${RED}${BOLDFONT}PUBLIC VPNs ARE NOT ASSUMED TO BE SAFE!${NC}${NORMALFONT} \n"; break;;	
+				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; printf "$provider entered. ${RED}${BOLDFONT}PUBLIC VPNs ARE NOT ASSUMED TO BE SAFE!${NC}${NORMALFONT} \n"; break;;	
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -181,11 +181,11 @@ if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
 		do
 		case $protomethod in
 			"UDP")
-				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${protomethod,,}'/' /etc/vswitch.conf; echo "$protomethod entered"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${protomethod,,}'/' /etc/openvpn/vswitch.conf; echo "$protomethod entered"; break;;
 			"TCP")
-				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${protomethod,,}'/' /etc/vswitch.conf; echo "$protomethod entered"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='${protomethod,,}'/' /etc/openvpn/vswitch.conf; echo "$protomethod entered"; break;;
 			"Either")
-				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL=udp/' /etc/vswitch.conf; PROTOCOL="udp"; echo "\"$protomethod\" entered - protocol defaulting to $PROTOCOL"; break;;
+				sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL=udp/' /etc/openvpn/vswitch.conf; PROTOCOL="udp"; echo "\"$protomethod\" entered - protocol defaulting to $PROTOCOL"; break;;
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -207,11 +207,11 @@ if [ "$1" = "ipversion" ] || [ "$1" = "ipv" ]; then
 		do
 		case $connectversion in
 			"IPv4")
-				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='4'/' /etc/vswitch.conf; echo "$connectversion entered"; break;;
+				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='4'/' /etc/openvpn/vswitch.conf; echo "$connectversion entered"; break;;
 			"IPv6")
-				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='6'/' /etc/vswitch.conf; echo "$connectversion entered"; break;;
+				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='6'/' /etc/openvpn/vswitch.conf; echo "$connectversion entered"; break;;
 			"Either")
-				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='4'/' /etc/vswitch.conf; echo "\"$connectversion\" entered - version defaulting to IPv$IPVERSION"; break;;
+				sudo sed -i '/IPVERSION/ s/.*/IPVERSION='4'/' /etc/openvpn/vswitch.conf; echo "\"$connectversion\" entered - version defaulting to IPv$IPVERSION"; break;;
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -226,7 +226,7 @@ if [ "$1" = "location" ] || [ "$1" = "region" ]; then
 		fn_check_iso_region
 	elif  [[ "$2" = *lear* ]]; then
 		REGIONPREF=""
-		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/vswitch.conf
+		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/openvpn/vswitch.conf
 	else
 		echo "Enter a 2-digit ISO country code to set as preference: "
 		read REGIONPREF
@@ -356,7 +356,6 @@ fi
 ###########
 if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
 	PS3='Remove vswitch? '
-	options=("y" "n" "Quit") y/n
 	while true; do
 	    read -p "Remove vswitch? (y/n) " yn
 	    case $yn in

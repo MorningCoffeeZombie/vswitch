@@ -93,8 +93,8 @@ fi
 # Install shell commands and man page
 sudo cp vswitch /usr/bin/vswitch
 sudo chmod +x /usr/bin/vswitch
-sudo cp vswitch.conf /etc/vswitch.conf
-sudo chmod +r /etc/vswitch.conf
+sudo cp vswitch.conf /etc/openvpn/vswitch.conf
+sudo chmod +r /etc/openvpn/vswitch.conf
 sudo cp vswitch.1 /usr/share/man/man1/
 sudo cp vswitch_autocomplete.sh /etc/bash_completion.d/vswitch
 sudo chmod +rx /etc/bash_completion.d/vswitch
