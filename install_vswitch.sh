@@ -9,7 +9,7 @@ TUNNEL="tun+"
 TODAYISO=`date '+%Y%m%d-%H%M'`
 INSTALLDIR=$(pwd)
 
-function fn_check_distro{
+function fn_check_distro(){
 	if [[ $(apropos "package manager") = *eopkg* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]];then
 		alias 'apt-get'=eopkg
 		DISTRO="solus"
@@ -17,6 +17,13 @@ function fn_check_distro{
 		alias eopkg="apt-get"
 		DISTRO="debian"
 	fi
+}
+function fn_vswitch_ascii(){
+	echo "                      _ __       __  "
+	echo " _   ________      __(_) /______/ /_ "
+	echo "| | / / ___/ | /| / / / __/ ___/ __ \ "
+	echo "| |/ (__  )| |/ |/ / / /_/ /__/ / / /"
+	echo "|___/____/ |__/|__/_/\__/\___/_/ /_/ "
 }
 
 

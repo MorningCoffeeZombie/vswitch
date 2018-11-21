@@ -102,6 +102,13 @@ function fn_uninstall_list(){
 	sudo rm /etc/openvpn/vswitch.conf
 	sudo rm /etc/bash_completion.d/vswitch
 }
+function fn_vswitch_ascii(){
+	echo "                      _ __       __  "
+	echo " _   ________      __(_) /______/ /_ "
+	echo "| | / / ___/ | /| / / / __/ ___/ __ \ "
+	echo "| |/ (__  )| |/ |/ / / /_/ /__/ / / /"
+	echo "|___/____/ |__/|__/_/\__/\___/_/ /_/ "
+}
 
 
 ################
@@ -235,6 +242,7 @@ if [ "$1" = "location" ] || [ "$1" = "region" ]; then
 fi
 if [[ "$1" = stat* ]]; then
 	fn_check_conf
+	fn_vswitch_ascii
 	printf "${BOLDFONT}Host:${NORMALFONT}		$VPNHOST \n"
 	printf "${BOLDFONT}VPN Username:${NORMALFONT}		$VPNUSERNAME \n"
 	printf "${BOLDFONT}Region Pref:${NORMALFONT}	$REGIONPREF \n"
@@ -305,7 +313,7 @@ fi
 if [[ "$1" = con* ]]; then
 	limit="1"
 	fn_recommend_server
-# Apparently nohup doesnt get along with with sudo and/or openvpn
+# Apparently nohup doesnt get along with with sudo and/or openvpn, using "&" instead
 #	if [ "$VPNHOST" = "nordvpn" ]; then
 #		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
 #		sudo openvpn /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &

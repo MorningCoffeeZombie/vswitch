@@ -1,4 +1,4 @@
-![VPN](http://ais.its.psu.edu/files/2015/06/vpn-logo.png)
+![VPN](logo.png)
 
 # Dependencies
 ufw	# Used for network management  
