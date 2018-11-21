@@ -303,7 +303,7 @@ fi
 if [[ "$1" = con* ]]; then
 	limit="1"
 	fn_recommend_server
-# apparently nohup doesnt get along with with sudo and/or openvpn
+# Apparently nohup doesnt get along with with sudo and/or openvpn
 #	sudo openvpn --config $BESTSERVER &
 fi
 if [[ "$1" = discon* ]]; then
@@ -329,10 +329,10 @@ if [[ "$1" = unpanic* ]]; then
 	ncmli networking on
 	fn_enable_vswitch
 fi
-if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ] ; then
+if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ]; then
 	fn_enable_vswitch
 fi
-if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ] ; then
+if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ]; then
 	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
 	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null
