@@ -9,6 +9,7 @@
 
 does debian use `nmcli`?
 'recommender' can find nordvpn servers that are unofficial?!?
+'recommender' currently only works for NordVPN
 grab the top-recommended server and prepare to connect
 	ping to see if it's online? or is that already built in?
 run a check to see if the 'panic' command is properly active
@@ -18,6 +19,7 @@ need to make connect and disconnect useful
 		offer ipv4 & ipv6 support
 for some reason you cannot connect to a vpn if 'vswitch on' was activated. need to allow connection during firewall or, at least, prioritize command properly
 should i offer to restore hosts file during uninstall?
+the `hosts` command is not properly interpretting the $2
 
 
 

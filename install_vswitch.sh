@@ -9,6 +9,16 @@ TUNNEL="tun+"
 TODAYISO=`date '+%Y%m%d-%H%M'`
 INSTALLDIR=$(pwd)
 
+function fn_check_distro{
+	if [[ $(apropos "package manager") = *eopkg* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]];then
+		alias 'apt-get'=eopkg
+		DISTRO="solus"
+	elif [[ $(apropos "package manager") = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
+		alias eopkg="apt-get"
+		DISTRO="debian"
+	fi
+}
+
 
 # Questionaire: offer a more secure hosts file
 while true; do
@@ -23,13 +33,7 @@ done
 # Make package management agnostic
 # Supporting Ubuntu + derivatives, Mint, Debian, Pure, Kali, Parrot and Tails
 # Could also run:	uname -a | grep -i ubuntu
-if [ $(uname -s) = *solus* ]; then
-	alias 'apt-get'=eopkg
-	DISTRO="solus"
-elif [[ $(uname -a) = *ubuntu* ]] ||  [[ $(uname -a) = *mint* ]] ||  [[ $(uname -a) = *debian* ]] || [[ $(uname -a) = *pure* ]] || [[ $(uname -a) = *kali* ]] || [[ $(uname -a) = *parrot* ]] || [[ $(uname -a) = *tails* ]]; then
-        alias eopkg="apt-get"
-	DISTRO="debian"
-fi
+fn_check_distro
 
 # Check for dependencies, install if absent
 # Could also run:	 dpkg -s openvpn | grep -i "Status:"
@@ -116,7 +120,16 @@ echo "Use the \"vswitch\" command to engage killswitch"
 ##################
 
 
-
+# This is the old 'distro checker'. It's fully functional but was depricated by optimized version:
+#function fn_check_distro{
+#	if [[ $(uname -s) = *olus* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]]; then
+#		alias 'apt-get'=eopkg
+#		DISTRO="solus"
+#	elif [[ $(uname -a) = *ubuntu* ]] ||  [[ $(uname -a) = *mint* ]] ||  [[ $(uname -a) = *debian* ]] || [[ $(uname -a) = *pure* ]] || [[ $(uname -a) = *kali* ]] || [[ $(uname -a) = *parrot* ]] || [[ $(uname -a) = *tails* ]]; then
+#		alias eopkg="apt-get"
+#		DISTRO="debian"
+#	fi
+#}
 
 
 

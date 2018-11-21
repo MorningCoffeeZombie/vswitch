@@ -7,7 +7,7 @@ jq	# Simple json reader for Linux
 
 # Compatibility
 Linux: Solus OS  
-Linux: Debian based systems (Ubuntu + derivatives, Mint, Debian, Pure, Kali, Parrot and Tails)  
+Linux: Debian based systems (anything using *apt-get* for package management)  
 VPN Provider: NordVPN  
 VPN Provider: Publicly available VPNs (use at your own risk)  
 
