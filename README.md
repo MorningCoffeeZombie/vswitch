@@ -1,7 +1,7 @@
 ![VPN](Resources/logo.png)
 
 # Dependencies
-**Dependencies will be installed during installation if missing**
+**Dependencies will be installed during installation if missing**  
 ufw	# Used for network management  
 openvpn	# Connects to VPN hosts/servers  
 jq	# Simple json reader for Linux  
