@@ -17,7 +17,6 @@ need to make connect and disconnect useful
 		offer ipv4 & ipv6 support
 for some reason you cannot connect to a vpn if 'vswitch on' was activated. need to allow connection during firewall or, at least, prioritize command properly
 should i offer to restore hosts file during uninstall?
-test that the autocompletion works even when i dont manually source the /etc/bash*.d/vswitch directly into terminal (not via scripting)
 
 
 
@@ -29,6 +28,8 @@ still having issues with the dependencies check on the install script
 i want a 'status' command to see if the vswitch is enabled or not (use ifconfig to grep)
 on the 'enable' command i need a failsafe to check that 'sudo ifconfig' is using 'tun0'
 make function run as a command - still need autocomplete for arguments/options
+test that the autocompletion works even when i dont manually source the /etc/bash*.d/vswitch directly into terminal (not via scripting)
+
 
 
 
