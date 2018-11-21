@@ -91,6 +91,7 @@ if [ $INSTALLHOSTS = "install" ]; then
 fi
 
 # Install shell commands and man page
+cd $INSTALLDIR
 sudo cp vswitch /usr/bin/vswitch
 sudo chmod +x /usr/bin/vswitch
 sudo cp vswitch.conf /etc/openvpn/vswitch.conf
