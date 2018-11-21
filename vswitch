@@ -109,8 +109,7 @@ function fn_uninstall_list(){
 ################
 if [ "$1" = "" ]; then
 	echo "Enter an argument or use \"man vswitch\" to view usage"
-fi
-if [ "$1" = "help" ] || [ "$1" = "/?" ] ; then
+elif [ "$1" = "help" ] || [ "$1" = "/?" ] ; then
 	man vswitch
 fi
 
@@ -355,7 +354,6 @@ fi
 # UNINSTALL
 ###########
 if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
-	PS3='Remove vswitch? '
 	while true; do
 	    read -p "Remove vswitch? (y/n) " yn
 	    case $yn in

@@ -11,13 +11,13 @@ Linux: Debian based systems (Ubuntu + derivatives, Mint, Debian, Pure, Kali, Par
 VPN Provider: NordVPN  
 VPN Provider: Publicly available VPNs (use at your own risk)  
 
-# LinuxVPNKillswitch
+# LinuxVPNKillswitch (vswitch)
 **vswitch**: "VPN kill Switch"  
 A Linux VPN killswitch designed, primarily, for OpenVPN via NordVPN hosting.  
 
 This script was written natively on Solus OS built with compatibility in-mind for Debian based systems.  
 
-The methodology employed is to utilize ufw, an uncomplicated firewall, to block out all traffic not traveling through tun0. In the event of a VPN disconnect all traffic will be blocked via firewall until either the connection is reestablished or the vswitch is disabled.  
+The methodology employed is to utilize ufw, an uncomplicated firewall, to block out all traffic not traveling through tun+ (tun0). In the event of a VPN disconnect all traffic will be blocked via firewall until either the connection is reestablished or the vswitch is disabled.  
 
 A custom hosts file is also included. This will attempt to limit spam/ads/intrusive behavior from less reputable domains. At time of installation you will be prompted to install or skip this file. Should you choose to install; a backup hosts file will be created in the same directory and named "hosts.BAK20181027-1735" where the string of numbers represent the date of installation in ISO format.  
 
@@ -25,6 +25,7 @@ Once installation is complete you may remove the repo from your PC. To uninstall
 
 Usage documentation has been provided via man page. Run **man vswitch** to view options and settings.  
 
-
+# Installation
+Run the *install_vswitch.sh* script. Root permissions will be required.
 
 
