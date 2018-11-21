@@ -140,10 +140,12 @@ if [ "$1" = "update" ] || [ "$1" = "up" ] ; then
 		for a in "${ar_public_vpn_urls[@]}"
 		do
 			sudo wget $a
-			a=`echo $a | sed 's:.*/::'`
+			a=`echo $a | sed 's:.*/::'` # $a now becomes the filename (after the last "/") instead of the URL
 			sudo chmod -R 777 $a
-			sudo unzip $a
-			sudo rm $a
+			if [[ "$a" = *.zip* ]]; then
+				sudo unzip $a
+				sudo rm $a
+			fi
 		done
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 		cd /etc/openvpn/
@@ -304,7 +306,13 @@ if [[ "$1" = con* ]]; then
 	limit="1"
 	fn_recommend_server
 # Apparently nohup doesnt get along with with sudo and/or openvpn
-#	sudo openvpn --config $BESTSERVER &
+#	if [ "$VPNHOST" = "nordvpn" ]; then
+#		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+#		sudo openvpn /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+#	else
+#		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+#		sudo openvpn /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+#	fi
 fi
 if [[ "$1" = discon* ]]; then
 	sudo killall openvpn
