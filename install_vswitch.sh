@@ -28,6 +28,7 @@ function fn_vswitch_ascii(){
 
 
 # Questionaire: offer a more secure hosts file
+fn_vswitch_ascii
 while true; do
 	read -p "Install a new hosts file to increase security and prevent ads? (y/n) " yn
 	case $yn in
@@ -48,32 +49,32 @@ if [[ DISTRO="solus" ]]; then
 	sudo eopkg install ca-certificates
 	sudo eopkg install ca-certs
 	if [[ $(sudo eopkg check ufw) != *integrity*of*ufw*OK* ]] &>/dev/null; then
-		sudo eopkg install ufw
-		sudo apt-get install ufw
+		sudo eopkg install ufw -y
+		sudo apt-get install ufw -y
 	fi
 	if [[ $(sudo eopkg check openvpn) != *integrity*of*openvpn*OK* ]] &>/dev/null; then
-        sudo eopkg install openvpn
-        sudo apt-get install openvpn
+		sudo eopkg install openvpn -y
+		sudo apt-get install openvpn -y
 	fi
 	if [[ $(sudo eopkg check jq) != *integrity*of*jq*OK* ]] &>/dev/null; then
-        sudo eopkg install jq
-        sudo apt-get install jq
+		sudo eopkg install jq -y
+		sudo apt-get install jq -y
 	fi
 fi
 if [[ DISTRO="debian" ]]; then
 	sudo apt-get install ca-certificates
 	sudo apt-get install ca-certs
 	if [[ $(dpkg -s ufw) = *not*installed* ]] &>/dev/null; then
-		sudo eopkg install ufw
-		sudo apt-get install ufw
+		sudo eopkg install ufw -y
+		sudo apt-get install ufw -y
 	fi
 	if [[ $(dpkg -s openvpn) = *not*installed* ]] &>/dev/null; then
-        sudo eopkg install openvpn
-        sudo apt-get install openvpn
+        sudo eopkg install openvpn -y
+        sudo apt-get install openvpn -y
 	fi
 	if [[ $(dpkg -s jq) = *not*installed* ]] &>/dev/null; then
-        sudo eopkg install jq
-        sudo apt-get install jq
+        sudo eopkg install jq -y
+        sudo apt-get install jq -y
 	fi
 fi
 

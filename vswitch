@@ -128,11 +128,11 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 # Taken from:   https://nordvpn.com/tutorials/linux/openvpn/
 	cd  /etc/openvpn
 	if [[ $(uname -s) = *olus* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]] || [[ $(apropos "package manager") = *eopkg* ]] || [ $DISTRO = "solus" ]; then
-		sudo eopkg install ca-certificates
-		sudo eopkg install ca-certs
+		sudo eopkg install ca-certificates -y
+		sudo eopkg install ca-certs -y
 	else
-		sudo apt-get install ca-certificates
-		sudo apt-get install ca-certs	
+		sudo apt-get install ca-certificates -y
+		sudo apt-get install ca-certs -y
 	fi
 	if [ "$VPNHOST" = "nordvpn" ]; then
 		sudo mkdir ${VPNHOST,,}
