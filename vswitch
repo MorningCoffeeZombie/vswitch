@@ -22,15 +22,15 @@ NC='\033[0m' # No Color
 function fn_check_conf(){
 	if [ ! -f "/etc/vswitch.conf" ]; then
 		echo "Config file could not be found, creating a new one"
-		sudo cat > /etc/vswitch.conf
-		sudo echo "PROTOCOL=udp" | sudo tee --append /etc/vswitch.conf
-		sudo echo "REGIONPREF=us" | sudo tee --append /etc/vswitch.conf
-		sudo echo "VPNHOST=nordvpn" | sudo tee --append /etc/vswitch.conf
-		sudo echo "VPNUSERNAME=" | sudo tee --append /etc/vswitch.conf
-		sudo echo "DISTRO=solus" | sudo tee --append /etc/vswitch.conf
-		sudo echo "TUNNEL=tun+" | sudo tee --append /etc/vswitch.conf
-		sudo echo "IPVERSION=4" | sudo tee --append /etc/vswitch.conf
-		sudo chomd 777 /etc/vswitch.conf
+		sudo echo> /etc/vswitch.conf
+		sudo printf "PROTOCOL=udp\n" | sudo tee --append /etc/vswitch.conf
+		sudo printf "REGIONPREF=us\n" | sudo tee --append /etc/vswitch.conf
+		sudo printf "VPNHOST=nordvpn\n" | sudo tee --append /etc/vswitch.conf
+		sudo printf "VPNUSERNAME=\n" | sudo tee --append /etc/vswitch.conf
+		sudo printf "DISTRO=solus\n" | sudo tee --append /etc/vswitch.conf
+		sudo printf "TUNNEL=tun+\n" | sudo tee --append /etc/vswitch.conf
+		sudo printf "IPVERSION=4\n" | sudo tee --append /etc/vswitch.conf
+		sudo chmod 777 /etc/vswitch.conf
 		echo "New config file successfully created"
 	fi
 }
@@ -235,6 +235,7 @@ if [ "$1" = "location" ] || [ "$1" = "region" ]; then
 	fi
 fi
 if [[ "$1" = stat* ]]; then
+	fn_check_conf
 	printf "${BOLDFONT}Host:${NORMALFONT}		$VPNHOST \n"
 	printf "${BOLDFONT}VPN Username:${NORMALFONT}		$VPNUSERNAME \n"
 	printf "${BOLDFONT}Region Pref:${NORMALFONT}	$REGIONPREF \n"
