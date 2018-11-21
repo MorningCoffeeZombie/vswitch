@@ -15,6 +15,9 @@ NC='\033[0m' # No Color
 # Command: vswitch
 
 
+####################
+# FUNCTIONS & ARRAYS
+####################
 # Confirm the /etc/vswitch.conf file is present
 function fn_check_conf(){
 	if [ ! -f "/etc/vswitch.conf" ]; then
@@ -30,6 +33,74 @@ function fn_check_conf(){
 		sudo chomd 777 /etc/vswitch.conf
 		echo "New config file successfully created"
 	fi
+}
+# Used in the `update` command to wget public VPN hosts
+ar_public_vpn_urls=(
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-PL226.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-DE4.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-US1.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-US2.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-CA222.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-FR1.zip'
+	'http://freevpn.me/OpenVPN-Certificate-Bundle-Server1.zip'
+	'http://freevpn.me/OpenVPN-Certificate-Bundle-Server2.zip'
+	'http://freevpnsoftware.net/downloads/US.freevpnsoftware.net.ovpn'
+	'http://freevpnsoftware.net/downloads/UK.freevpnsoftware.net.ovpn'
+)
+# Used in `region` command to check for valid ISO codes
+# List forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
+ar_2_digit_iso=(
+  'ad' 'ae' 'af' 'ag' 'ai' 'al' 'am' 'ao' 'aq' 'ar' 'as' 'at' 'au' 'aw' 'ax'
+  'az' 'ba' 'bb' 'bd' 'be' 'bf' 'bg' 'bh' 'bi' 'bj' 'bl' 'bm' 'bn' 'bo' 'bq'
+  'br' 'bs' 'bt' 'bv' 'bw' 'by' 'bz' 'ca' 'cc' 'cd' 'cf' 'cg' 'ch' 'ci' 'ck'
+  'cl' 'cm' 'cn' 'co' 'cr' 'cu' 'cv' 'cw' 'cx' 'cy' 'cz' 'de' 'dj' 'dk' 'dm'
+  'do' 'dz' 'ec' 'ee' 'eg' 'eh' 'er' 'es' 'et' 'fi' 'fj' 'fk' 'fm' 'fo' 'fr'
+  'ga' 'gb' 'gd' 'ge' 'gf' 'gg' 'gh' 'gi' 'gl' 'gm' 'gn' 'gp' 'gq' 'gr' 'gs'
+  'gt' 'gu' 'gw' 'gy' 'hk' 'hm' 'hn' 'hr' 'ht' 'hu' 'id' 'ie' 'il' 'im' 'in'
+  'io' 'iq' 'ir' 'is' 'it' 'je' 'jm' 'jo' 'jp' 'ke' 'kg' 'kh' 'ki' 'km' 'kn'
+  'kp' 'kr' 'kw' 'ky' 'kz' 'la' 'lb' 'lc' 'li' 'lk' 'lr' 'ls' 'lt' 'lu' 'lv'
+  'ly' 'ma' 'mc' 'md' 'me' 'mf' 'mg' 'mh' 'mk' 'ml' 'mm' 'mn' 'mo' 'mp' 'mq'
+  'mr' 'ms' 'mt' 'mu' 'mv' 'mw' 'mx' 'my' 'mz' 'na' 'nc' 'ne' 'nf' 'ng' 'ni'
+  'nl' 'no' 'np' 'nr' 'nu' 'nz' 'om' 'pa' 'pe' 'pf' 'pg' 'ph' 'pk' 'pl' 'pm'
+  'pn' 'pr' 'ps' 'pt' 'pw' 'py' 'qa' 're' 'ro' 'rs' 'ru' 'rw' 'sa' 'sb' 'sc'
+  'sd' 'se' 'sg' 'sh' 'si' 'sj' 'sk' 'sl' 'sm' 'sn' 'so' 'sr' 'ss' 'st' 'sv'
+  'sx' 'sy' 'sz' 'tc' 'td' 'tf' 'tg' 'th' 'tj' 'tk' 'tl' 'tm' 'tn' 'to' 'tr'
+  'tt' 'tv' 'tw' 'tz' 'ua' 'ug' 'uk' 'um' 'us' 'uy' 'uz' 'va' 'vc' 've' 'vg'
+  'vi' 'vn' 'vu' 'wf' 'ws' 'ye' 'yt' 'za' 'zm' 'zw'
+)
+# Used in `region` command to check for valid ISO codes
+function fn_check_iso_region(){
+	if [[ " ${ar_2_digit_iso[*]} " == *"$REGIONPREF"* ]]; then
+		echo "Entered: $REGIONPREF"
+		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/vswitch.conf
+	else
+		echo "$REGIONPREF is not a valid region and/or not supported by NordVPN at this time"
+	fi
+}
+# Used by `on` and `unpanic` to return to a non-firewalled state
+function fn_enable_vswitch(){
+	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
+	sudo echo "y" | sudo ufw reset &>/dev/null
+	sudo ufw default deny incoming &>/dev/null
+	sudo ufw default deny outgoing &>/dev/null
+	sudo ufw allow out on tun+ from any to any &>/dev/null
+	sudo ufw enable &>/dev/null
+	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
+		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
+	fi
+	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
+		NEWIP=`curl icanhazip.com`
+		printf "VPN killswitch	\t ${GREEN}ENABLED${NC} \n"
+		printf "Your new IP is	\t ${GREEN}${NEWIP}${NC} \n" 
+	fi
+}
+# Used by `remove` command to list all resources and uninstall vswitch
+function fn_uninstall_list(){
+	# List all files associated with this script. A unified place to list everything installed
+	sudo rm /usr/bin/vswitch
+	sudo rm /usr/share/man/man1/vswitch.1
+	sudo rm /etc/vswitch.conf
+	sudo rm /etc/bash_completion.d/vswitch
 }
 
 
@@ -47,18 +118,6 @@ fi
 ##########
 # SETTINGS
 ##########
-ar_public_vpn_urls=(
-	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-PL226.zip'
-	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-DE4.zip'
-	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-US1.zip'
-	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-US2.zip'
-	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-CA222.zip'
-	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-FR1.zip'
-	'http://freevpn.me/OpenVPN-Certificate-Bundle-Server1.zip'
-	'http://freevpn.me/OpenVPN-Certificate-Bundle-Server2.zip'
-	'http://freevpnsoftware.net/downloads/US.freevpnsoftware.net.ovpn'
-	'http://freevpnsoftware.net/downloads/UK.freevpnsoftware.net.ovpn'
-)
 if [ "$1" = "update" ] || [ "$1" = "up" ] ; then
 # Taken from:   https://nordvpn.com/tutorials/linux/openvpn/
 	cd  /etc/openvpn
@@ -102,7 +161,7 @@ if [[ "$1" = host* ]]; then
 			"NordVPN")
 				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; echo "$provider entered"; break;;
 			"Public")
-				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; echo "$provider entered. ${RED}PUBLIC VPNs ARE NOT ASSUMED TO BE SAFE!${NC}"; break;;	
+				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; printf "$provider entered. ${RED}${BOLDFONT}PUBLIC VPNs ARE NOT ASSUMED TO BE SAFE!${NC}${NORMALFONT} \n"; break;;	
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -158,42 +217,12 @@ if [ "$1" = "ipversion" ] || [ "$1" = "ipv" ]; then
 		done
 	fi
 fi
-
-# List forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
-ar_2_digit_iso=(
-  'ad' 'ae' 'af' 'ag' 'ai' 'al' 'am' 'ao' 'aq' 'ar' 'as' 'at' 'au' 'aw' 'ax'
-  'az' 'ba' 'bb' 'bd' 'be' 'bf' 'bg' 'bh' 'bi' 'bj' 'bl' 'bm' 'bn' 'bo' 'bq'
-  'br' 'bs' 'bt' 'bv' 'bw' 'by' 'bz' 'ca' 'cc' 'cd' 'cf' 'cg' 'ch' 'ci' 'ck'
-  'cl' 'cm' 'cn' 'co' 'cr' 'cu' 'cv' 'cw' 'cx' 'cy' 'cz' 'de' 'dj' 'dk' 'dm'
-  'do' 'dz' 'ec' 'ee' 'eg' 'eh' 'er' 'es' 'et' 'fi' 'fj' 'fk' 'fm' 'fo' 'fr'
-  'ga' 'gb' 'gd' 'ge' 'gf' 'gg' 'gh' 'gi' 'gl' 'gm' 'gn' 'gp' 'gq' 'gr' 'gs'
-  'gt' 'gu' 'gw' 'gy' 'hk' 'hm' 'hn' 'hr' 'ht' 'hu' 'id' 'ie' 'il' 'im' 'in'
-  'io' 'iq' 'ir' 'is' 'it' 'je' 'jm' 'jo' 'jp' 'ke' 'kg' 'kh' 'ki' 'km' 'kn'
-  'kp' 'kr' 'kw' 'ky' 'kz' 'la' 'lb' 'lc' 'li' 'lk' 'lr' 'ls' 'lt' 'lu' 'lv'
-  'ly' 'ma' 'mc' 'md' 'me' 'mf' 'mg' 'mh' 'mk' 'ml' 'mm' 'mn' 'mo' 'mp' 'mq'
-  'mr' 'ms' 'mt' 'mu' 'mv' 'mw' 'mx' 'my' 'mz' 'na' 'nc' 'ne' 'nf' 'ng' 'ni'
-  'nl' 'no' 'np' 'nr' 'nu' 'nz' 'om' 'pa' 'pe' 'pf' 'pg' 'ph' 'pk' 'pl' 'pm'
-  'pn' 'pr' 'ps' 'pt' 'pw' 'py' 'qa' 're' 'ro' 'rs' 'ru' 'rw' 'sa' 'sb' 'sc'
-  'sd' 'se' 'sg' 'sh' 'si' 'sj' 'sk' 'sl' 'sm' 'sn' 'so' 'sr' 'ss' 'st' 'sv'
-  'sx' 'sy' 'sz' 'tc' 'td' 'tf' 'tg' 'th' 'tj' 'tk' 'tl' 'tm' 'tn' 'to' 'tr'
-  'tt' 'tv' 'tw' 'tz' 'ua' 'ug' 'uk' 'um' 'us' 'uy' 'uz' 'va' 'vc' 've' 'vg'
-  'vi' 'vn' 'vu' 'wf' 'ws' 'ye' 'yt' 'za' 'zm' 'zw'
-)
-function fn_check_iso_region(){
-	if [[ " ${ar_2_digit_iso[*]} " == *"$REGIONPREF"* ]]; then
-		echo "Entered: $REGIONPREF"
-		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/vswitch.conf
-	else
-		echo "$REGIONPREF is not a valid region and/or not supported by NordVPN at this time"
-	fi
-}
-
 if [ "$1" = "location" ] || [ "$1" = "region" ]; then
 	if [[ "$2" != "" ]]; then
 		REGIONPREF=$2
 		fn_check_conf
 		fn_check_iso_region
-	elif  [[ "$2" != *lear* ]]; then
+	elif  [[ "$2" = *lear* ]]; then
 		REGIONPREF=""
 		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/vswitch.conf
 	else
@@ -229,23 +258,6 @@ fi
 ####################
 # CONNECT AND ENABLE
 ####################
-
-function fn_enable_vswitch(){
-	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
-	sudo echo "y" | sudo ufw reset &>/dev/null
-	sudo ufw default deny incoming &>/dev/null
-	sudo ufw default deny outgoing &>/dev/null
-	sudo ufw allow out on tun+ from any to any &>/dev/null
-	sudo ufw enable &>/dev/null
-	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
-		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
-	fi
-	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
-		NEWIP=`curl icanhazip.com`
-		printf "VPN killswitch	\t ${GREEN}ENABLED${NC} \n"
-		printf "Your new IP is	\t ${GREEN}${NEWIP}${NC} \n" 
-	fi
-}
 function fn_recommend_server(){
 # Forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
 	# Need something here
@@ -333,14 +345,6 @@ fi
 ###########
 # UNINSTALL
 ###########
-function fn_uninstall_list(){
-	# List all files associated with this script. A unified place to list everything installed
-	sudo rm /usr/bin/vswitch
-	sudo rm /usr/share/man/man1/vswitch.1
-	sudo rm /etc/vswitch.conf
-	sudo rm /etc/bash_completion.d/vswitch
-}
-
 if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
 	PS3='Remove vswitch? '
 	options=("y" "n" "Quit") y/n

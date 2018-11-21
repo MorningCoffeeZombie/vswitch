@@ -5,7 +5,7 @@
 DISTRO="solus"
 PROTOCOL="udp"
 VPNHOST="nordvpn"
-TUNNEL=tun+
+TUNNEL="tun+"
 TODAYISO=`date '+%Y%m%d-%H%M'`
 INSTALLDIR=$(pwd)
 
@@ -75,8 +75,6 @@ sudo unzip ovpn.zip
 sudo rm ovpn.zip
 cd ovpn_${PROTOCOL,,}	# Sets ovpn_ to declared variable in lower case
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-
-
 
 # Saving original host file as a .BAK with today's date in ISO format and then installing modified verson
 if [ $INSTALLHOSTS = "install" ]; then
