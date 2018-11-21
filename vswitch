@@ -47,34 +47,62 @@ fi
 ##########
 # SETTINGS
 ##########
+ar_public_vpn_urls=(
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-PL226.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-DE4.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-US1.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-US2.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-CA222.zip'
+	'https://www.vpnbook.com/free-openvpn-account/VPNBook.com-OpenVPN-FR1.zip'
+	'http://freevpn.me/OpenVPN-Certificate-Bundle-Server1.zip'
+	'http://freevpn.me/OpenVPN-Certificate-Bundle-Server2.zip'
+	'http://freevpnsoftware.net/downloads/US.freevpnsoftware.net.ovpn'
+	'http://freevpnsoftware.net/downloads/UK.freevpnsoftware.net.ovpn'
+)
 if [ "$1" = "update" ] || [ "$1" = "up" ] ; then
 # Taken from:   https://nordvpn.com/tutorials/linux/openvpn/
-cd  /etc/openvpn
-		if [ "$VPNHOST" = "nordvpn" ]; then	
-			sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-			if [ $(uname -s) = *solus* ]; then
-			sudo eopkg install ca-certificates
-			sudo eopkg install ca-certs
-		else
-			sudo apt-get install ca-certificates
-			sudo apt-get install ca-certs	
-		fi
+	cd  /etc/openvpn
+	if [ $(uname -s) = *solus* ] || [ $DISTRO = "solus" ]; then
+		sudo eopkg install ca-certificates
+		sudo eopkg install ca-certs
+	else
+		sudo apt-get install ca-certificates
+		sudo apt-get install ca-certs	
+	fi
+	if [ "$VPNHOST" = "nordvpn" ]; then
+		mkdir ${VPNHOST,,}
+		sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 		sudo unzip ovpn.zip
 		sudo rm ovpn.zip
-		cd /etc/openvpn/ovpn_${PROTOCOL,,}   # Sets ovpn_ to declared variable in lower case
+		cd /etc/openvpn/mkdir ${VPNHOST,,}/ovpn_${PROTOCOL,,}   # Sets ovpn_ to declared variable in lower case
+	elif [ "$VPNHOST" = "public" ]; then
+		mkdir ${VPNHOST,,}
+		cd /etc/openvpn/${VPNHOST,,}
+		for a in "${ar_public_vpn_urls[@]}"
+		do
+			sudo wget $a
+			a=`echo $a | sed 's:.*/::'`
+			sudo chmod -R 777 $a
+			sudo unzip $a
+			sudo rm $a
+		done
+		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
+		cd /etc/openvpn/
 	fi
 fi
 if [[ "$1" = host* ]]; then
 	VPNHOST="$2"
-	if [ "$2" = "" ] || [[ "$2" != * ]] || [[ "$2" != Nord* ]] || [[ "$2" != nord* ]]; then
+	if [ "$2" = "" ] || [[ "$2" != * ]] || [[ "$2" != Nord* ]] || [[ "$2" != nord* ]] || [ "$2" != "public" ]; then
 		fn_check_conf
 		PS3='Choose from a list of supported VPN providers: '
-		options=("NordVPN" "Quit")
+		options=("NordVPN" "Public" "Quit")
 		select provider in "${options[@]}"
 		do
 		case $provider in
 			"NordVPN")
 				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; echo "$provider entered"; break;;
+			"Public")
+				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/vswitch.conf; echo "$provider entered. ${RED}PUBLIC VPNs ARE NOT ASSUMED TO BE SAFE!${NC}"; break;;	
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;
@@ -263,7 +291,8 @@ fi
 if [[ "$1" = con* ]]; then
 	limit="1"
 	fn_recommend_server
-#	sudo openvpn --config $BESTSERVER
+# apparently nohup doesnt get along with with sudo and/or openvpn
+#	sudo openvpn --config $BESTSERVER &
 fi
 if [[ "$1" = discon* ]]; then
 	sudo killall openvpn

@@ -53,8 +53,8 @@ fi
 
 # Saving known VPNs
 # Taken from:	https://nordvpn.com/tutorials/linux/openvpn/
-sudo mkdir /etc/openvpn
-cd  /etc/openvpn
+sudo mkdir /etc/openvpn/${VPNHOST,,}
+cd  /etc/openvpn/${VPNHOST,,}
 sudo unzip ovpn.zip
 sudo rm ovpn.zip
 cd ovpn_${PROTOCOL,,}	# Sets ovpn_ to declared variable in lower case
