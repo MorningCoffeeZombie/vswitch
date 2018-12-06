@@ -79,7 +79,7 @@ function fn_check_iso_region(){
 }
 # Used by `on` and `unpanic` to return to a non-firewalled state
 function fn_enable_vswitch(){
-	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
+	# Copied/edited from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
 	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null
 	sudo ufw default deny outgoing &>/dev/null
@@ -352,7 +352,7 @@ if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ]; then
 	fn_enable_vswitch
 fi
 if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ]; then
-	# Copied from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
+	# Copied/edited from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
 	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null
 	sudo ufw default allow outgoing &>/dev/null
