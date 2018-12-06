@@ -6,7 +6,7 @@
 # PRIORITIES
 ############
 
-
+REVIEW:	https://github.com/gjedeer/nordvpn/issues/1
 MID:	'recommender' can find nordvpn servers that are unofficial?!?
 LOW:	'recommender' currently only works for NordVPN
 HIGH:	grab the top-recommended server and prepare to connect
