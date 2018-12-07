@@ -31,6 +31,13 @@ Once installation is complete you may remove the repo from your PC. To uninstall
 Usage documentation has been provided via man page. Run **man vswitch** to view options and settings.  
 
 # Installation
-Run the *install_vswitch.sh* script. Root permissions will be required.
+Run `./install_vswitch.sh` script and `source /etc/bash_completion.d/vswitch`. Root permissions will be required.  
+For the lazy:  
+```bash
+git clone https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git
+cd LinuxVPNKillswitch
+./install_vswitch.sh
+source /etc/bash_completion.d/vswitch
+```
 
 

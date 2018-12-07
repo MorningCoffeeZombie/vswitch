@@ -283,11 +283,19 @@ if [ "$1" = "location" ] || [ "$1" = "region" ]; then
 		fn_check_iso_region
 	fi
 fi
+if [[ "$1" = user* ]] && [[ "$2" != * ]] || [ "$2" != "" ]; then
+	sudo sed -i '/VPNUSERNAME/ s/.*/VPNUSERNAME='$2'/' /etc/openvpn/vswitch.conf
+elif [[ "$1" = user* ]] && [[ "$2" = * ]]; then
+	printf "${YELLOW}${BOLDFONT}NOTICE: Saving credentials is a security risk!${NORMALFONT}${NC} \n"
+	read -p "Enter your $VPNHOST username: " VPNUSERNAME
+	sudo sed -i '/VPNUSERNAME/ s/.*/VPNUSERNAME='$VPNUSERNAME'/' /etc/openvpn/vswitch.conf
+	echo "$VPNUSERNAME has been saved as your $VPNHOST username"
+fi
 if [[ "$1" = stat* ]]; then
 	fn_check_conf
 	fn_vswitch_ascii
 	printf "${BOLDFONT}Host:${NORMALFONT}		$VPNHOST \n"
-	printf "${BOLDFONT}VPN Username:${NORMALFONT}		$VPNUSERNAME \n"
+	printf "${BOLDFONT}VPN Username:${NORMALFONT}	$VPNUSERNAME \n"
 	printf "${BOLDFONT}Region Pref:${NORMALFONT}	$REGIONPREF \n"
 	printf "${BOLDFONT}Protocol:${NORMALFONT}	$PROTOCOL \n"
 	printf "${BOLDFONT}IP Version:${NORMALFONT}	IPv$IPVERSION \n"
