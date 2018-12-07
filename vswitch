@@ -172,11 +172,12 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo apt-get install ca-certs -y
 	fi
 	if [ "$VPNHOST" = "nordvpn" ]; then
-		sudo mkdir ${VPNHOST,,}
+		sudo mkdir /etc/openvpn/${VPNHOST,,}
+		cd /etc/openvpn/${VPNHOST,,}
 		sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 		sudo unzip ovpn.zip
 		sudo rm ovpn.zip
-		cd /etc/openvpn/mkdir ${VPNHOST,,}/ovpn_${PROTOCOL,,}   # Sets ovpn_ to declared variable in lower case
+		cd /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}   # Sets current ovpn_ dir to declared variable in lower case
 	elif [ "$VPNHOST" = "public" ]; then
 		sudo mkdir /etc/openvpn/${VPNHOST,,}
 		cd /etc/openvpn/${VPNHOST,,}
@@ -283,7 +284,7 @@ if [ "$1" = "location" ] || [ "$1" = "region" ]; then
 		fn_check_iso_region
 	fi
 fi
-if [[ "$1" = user* ]] && [[ "$2" != * ]] || [ "$2" != "" ]; then
+if [[ "$2" != * ]] || [ "$2" != "" ] && [[ "$1" = user* ]] ; then
 	sudo sed -i '/VPNUSERNAME/ s/.*/VPNUSERNAME='$2'/' /etc/openvpn/vswitch.conf
 elif [[ "$1" = user* ]] && [[ "$2" = * ]]; then
 	printf "${YELLOW}${BOLDFONT}NOTICE: Saving credentials is a security risk!${NORMALFONT}${NC} \n"
