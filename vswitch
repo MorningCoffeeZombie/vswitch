@@ -193,6 +193,7 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		done
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 		cd /etc/openvpn/
+		rm /etc/openvpn/${VPNHOST,,}/*ovpn.1	# Remove accidentally duplicated files
 	fi
 fi
 if [[ "$1" = host* ]]; then
@@ -225,7 +226,7 @@ if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
 		sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='tcp'/' /etc/openvpn/vswitch.conf
 	else
 		fn_check_conf
-		PS3="What protocol would you like to connect via? (You are set to connect via $PROTOCOL) "
+		PS3="What protocol would you like to connect via? (Current default: $PROTOCOL) "
 		options=("UDP" "TCP" "Either" "Quit")
 		select protomethod in "${options[@]}"
 		do
