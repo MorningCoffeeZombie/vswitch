@@ -112,12 +112,13 @@ function fn_check_distro(){
 	fi
 }
 function fn_check_connectivity(){
+	# The idea is: if you can't find IP from any of these (generally reliable) sites...you're probably actively filtering connections.
 	if curl icanhazip.com &>/dev/null && curl http://www.google.com &>/dev/null && dig +short myip.opendns.com @resolver1.opendns.com &>/dev/null && wget -qO- ipinfo.io/ip &>/dev/null && curl checkip.amazonaws.com &>/dev/null && dig TXT +short o-o.myaddr.l.google.com @ns1.google.com &>/dev/null; then
 		# If you CAN curl then:
-		UFWSTATUS="untunneled"
+		UFWSTATUS="webaccess"
 	else
 		# If you CANNOT curl & wget & dig then:
-		UFWSTATUS="tunneled"
+		UFWSTATUS="webdenied"
 	fi
 }
 function fn_vswitch_ascii(){
@@ -411,9 +412,9 @@ if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
 	#nmcli networking connectivity &>/dev/null
 	#nmcli general status &>/dev/null
 	fn_check_connectivity
-	if [ "$UFWSTATUS" = "tunneled" ]; then
+	if [ "$UFWSTATUS" = "webdenied" ]; then
 		echo "${BOLDFONT}PANIC MODE ENABLED${NORMALFONT}"
-	elif [ "$UFWSTATUS" = "untunneled" ]; then
+	elif [ "$UFWSTATUS" = "webaccess" ]; then
 		printf "${RED}${BOLDFONT}ERROR!${NORMALFONT}${NC} \n"
 		printf "${RED}${BOLDFONT}PANIC MODE FAILURE!${NORMALFONT}${NC} \n"
 	else
