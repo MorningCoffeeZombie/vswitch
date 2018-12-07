@@ -9,6 +9,7 @@ source /etc/bash_completion.d/vswitch
 BOLDFONT=$(tput bold)
 NORMALFONT=$(tput sgr0)
 RED='\033[0;31m'
+YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
@@ -102,6 +103,15 @@ function fn_uninstall_list(){
 	sudo rm /etc/openvpn/vswitch.conf
 	sudo rm /etc/bash_completion.d/vswitch
 }
+function fn_check_distro(){
+	if [[ $(apropos "package manager") = *eopkg* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]];then
+		alias 'apt-get'=eopkg
+		DISTRO="solus"
+	elif [[ $(apropos "package manager") = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
+		alias eopkg="apt-get"
+		DISTRO="debian"
+	fi
+}
 function fn_vswitch_ascii(){
 	echo "                      _ __       __  "
 	echo " _   ________      __(_) /______/ /_ "
@@ -124,6 +134,25 @@ fi
 ##########
 # SETTINGS
 ##########
+if [[ "$1" = distro* ]] || [ "$1" = "os" ]; then
+	fn_check_conf
+	PS3="What Linux distribution are you using? "
+	options=("Solus OS" "Debian-based" "Unknown" "Quit")
+	select userdistro in "${options[@]}"
+	do
+	case $userdistro in
+		"Solus OS")
+			sudo sed -i '/DISTRO/ s/.*/DISTRO=solus/' /etc/openvpn/vswitch.conf; echo "$userdistro entered"; break;;
+		"Debian-based")
+			sudo sed -i '/DISTRO/ s/.*/DISTRO=debian/' /etc/openvpn/vswitch.conf; echo "$userdistro entered"; break;;
+		"Unknown")
+			fn_check_distro; sudo sed -i '/DISTRO/ s/.*/DISTRO='$DISTRO'/' /etc/openvpn/vswitch.conf; DISTRO="udp"; echo "\"$userdistro\" entered - Distribution detected and set as $DISTRO"; break;;
+		"Quit")
+			break;;
+		*) echo "invalid option $REPLY";;
+	esac
+	done
+fi
 if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 # Taken from:   https://nordvpn.com/tutorials/linux/openvpn/
 	cd  /etc/openvpn
@@ -280,7 +309,7 @@ function fn_recommend_server(){
 	while IFS="=" read -r key value
 	do
 	results[$key]="$value"
-	BESTSERVER=$key
+	BESTSERVER=$key.$PROTOCOL.ovpn
 	done < <(jq --compact-output -r --arg location "$REGIONPREF" --arg capacity "$capacity" --arg limit "$limit" \
 	'[. |
 	to_entries[] |
@@ -314,19 +343,34 @@ if [[ "$1" = con* ]]; then
 	limit="1"
 	fn_recommend_server
 # Apparently nohup doesnt get along with with sudo and/or openvpn, can't use "&" because it messses with entering credentials
-# the below listed openvpn commands work with Debian but not with Solus
-#	if [ "$VPNHOST" = "nordvpn" ]; then
-#		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
-#		sudo openvpn /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+# openvpn commands work with Debian but not with Solus
+	if [ "$VPNHOST" = "nordvpn" ] && [[ $DISTRO = *ebian* ]]; then
+		IPBEFORECONNECT=`curl icanhazip.com`
+		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+		sudo openvpn /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+		IPAFTERCONNECT=`curl icanhazip.com`
+			if [ "$IPBEFORECONNECT" = "$IPAFTERCONNECT" ]; then
+				printf "${RED}${BOLDFONT}VPN CONNECTION FAILED!${NORMALFONT}${NC} \n"
+				printf "${RED}${BOLDFONT}YOUR IP HAS NOT CHANGED!${NORMALFONT}${NC} \n"
+			else
+				printf "${GREEN}${BOLDFONT}Your IP has changed to: \t $IPAFTERCONNECT${NORMALFONT}${NC} \n"
+			fi
 #	else
 #		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 #		sudo openvpn /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
-#	fi
+	fi
+	if [[ $DISTRO = *olus* ]]; then
+		printf "${YELLOW}${BOLDFONT}Solus OS does not currently support ovpn CLI${NORMALFONT}${NC} \n"
+		printf "${YELLOW}${BOLDFONT}Please connect via GUI${NORMALFONT}${NC} \n"
+#	else
+#		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+#		sudo openvpn /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+	fi
 fi
 if [[ "$1" = discon* ]]; then
 	sudo killall openvpn
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
-		printf "${GREEN}VSWITCH IS STILL ACTIVE${NC} \n"
+		printf "${BOLDFONT}VPN Required:${NORMALFONT}	\t ${GREEN}YES${NC} \n"
 		printf "Use ${BOLDFONT}vswitch off${NORMALFONT} to renable untunneled connections. \n"
 	fi
 	if [[ $(sudo ufw status) != *ALLOW*OUT*tun* ]] &>/dev/null; then
@@ -348,10 +392,10 @@ if [[ "$1" = unpanic* ]]; then
 	fn_enable_vswitch
 	echo "${BOLDFONT}PANIC MODE DISABLED${NORMALFONT}"
 fi
-if [ "$1" = "on" ] || [ "$1" = "engage" ] || [ "$1" = "enable" ]; then
+if [ "$1" = "on" ] || [ "$1" = "enable" ]; then
 	fn_enable_vswitch
 fi
-if [[ "$1" = off* ]] || [[ "$1" = disengage* ]] || [ "$1" = "disable" ]; then
+if [[ "$1" = off* ]] || [ "$1" = "disable" ]; then
 	# Copied/edited from:	https://thetinhat.com/tutorials/misc/linux-vpn-drop-protection-firewall.html
 	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null

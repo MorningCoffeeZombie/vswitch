@@ -45,7 +45,7 @@ fn_check_distro
 
 # Check for dependencies, install if absent
 # Could also run:	 dpkg -s openvpn | grep -i "Status:"
-if [[ DISTRO="solus" ]]; then
+if [[ $DISTRO="solus" ]]; then
 	sudo eopkg install ca-certificates
 	sudo eopkg install ca-certs
 	if [[ $(sudo eopkg check ufw) != *integrity*of*ufw*OK* ]] &>/dev/null; then
@@ -65,7 +65,7 @@ if [[ DISTRO="solus" ]]; then
 		sudo apt-get install jq -y
 	fi
 fi
-if [[ DISTRO="debian" ]]; then
+if [[ $DISTRO="debian" ]]; then
 	sudo apt-get install ca-certificates
 	sudo apt-get install ca-certs
 	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null; then
