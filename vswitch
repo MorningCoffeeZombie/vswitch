@@ -195,8 +195,11 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 	fi
 fi
 if [[ "$1" = host* ]]; then
-	VPNHOST=${2,,}
-	if [ "$2" = "" ] || [[ "$2" != Nord* ]] || [[ "$2" != nord* ]] || [ "$2" != "public" ]; then
+	if [[ "${2,,}" = nord* ]]; then
+		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='nordvpn'/' /etc/openvpn/vswitch.conf
+	elif [[ "${2,,}" = publ* ]]; then
+		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='public'/' /etc/openvpn/vswitch.conf
+	else
 		fn_check_conf
 		PS3='Choose from a list of supported VPN providers: '
 		options=("NordVPN" "Public" "Quit")
@@ -211,12 +214,15 @@ if [[ "$1" = host* ]]; then
 				break;;
 			*) echo "invalid option $REPLY";;
 		esac
-		done				
+		done
 	fi
 fi
 if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
-	PROTOCOL="$2"
-	if [ "$2" != "udp" ] && [ "$2" != "tcp" ]; then
+	if [[ "${2,,}" = u* ]]; then
+		sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='udp'/' /etc/openvpn/vswitch.conf
+	elif [[ "${2,,}" = t* ]]; then
+		sudo sed -i '/PROTOCOL/ s/.*/PROTOCOL='tcp'/' /etc/openvpn/vswitch.conf
+	else
 		fn_check_conf
 		PS3="What protocol would you like to connect via? (You are set to connect via $PROTOCOL) "
 		options=("UDP" "TCP" "Either" "Quit")
@@ -238,9 +244,9 @@ if [ "$1" = "protocol" ] || [ "$1" = "pr" ]; then
 fi
 if [ "$1" = "ipversion" ] || [ "$1" = "ipv" ]; then
 	if [[ "$2" = *4* ]]; then
-		IPVERSION="4"
+		sudo sed -i '/IPVERSION/ s/.*/IPVERSION='4'/' /etc/openvpn/vswitch.conf
 	elif [[ "$2" = *6* ]]; then
-		IPVERSION="6"
+		sudo sed -i '/IPVERSION/ s/.*/IPVERSION='6'/' /etc/openvpn/vswitch.conf
 	fi
 	if [[ "$2" != *4* ]] && [[ "$2" != *6* ]]; then
 		fn_check_conf
