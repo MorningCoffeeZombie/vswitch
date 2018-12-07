@@ -32,8 +32,8 @@ Usage documentation has been provided via man page. Run **man vswitch** to view 
 
 # Installation
 Run `./install_vswitch.sh` script and `source /etc/bash_completion.d/vswitch`. Root permissions will be required.  
-For the lazy:  
-```bash
+**For the lazy:**  
+```shell
 git clone https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git
 cd LinuxVPNKillswitch
 ./install_vswitch.sh
