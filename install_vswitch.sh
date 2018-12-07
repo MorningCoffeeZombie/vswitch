@@ -10,10 +10,10 @@ TODAYISO=`date '+%Y%m%d-%H%M'`
 INSTALLDIR=$(pwd)
 
 function fn_check_distro(){
-	if [[ $(apropos "package manager") = *eopkg* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]];then
+	if [[ $(apropos "package manager" &>/dev/null) = *eopkg* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]];then
 		alias 'apt-get'=eopkg
 		DISTRO="solus"
-	elif [[ $(apropos "package manager") = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
+	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
 		alias eopkg="apt-get"
 		DISTRO="debian"
 	fi
@@ -98,7 +98,7 @@ cd  /etc/openvpn/${VPNHOST,,}
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 sudo unzip /etc/openvpn/${VPNHOST,,}/ovpn.zip
 sudo rm /etc/openvpn/${VPNHOST,,}/ovpn.zip
-cd /etc/openvpn/${VPNHOST,,}ovpn_${PROTOCOL,,}	# Sets cd ovpn_ to declared variable in lower case
+cd /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}	# Sets cd ovpn_ to declared variable in lower case
 
 # Saving original host file as a .BAK with today's date in ISO format and then installing modified verson
 if [ $INSTALLHOSTS = "install" ]; then
