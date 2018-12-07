@@ -11,7 +11,6 @@ MID:	'recommender' can find nordvpn servers that are unofficial?!?
 LOW:	'recommender' currently only works for NordVPN
 HIGH:	grab the top-recommended server and prepare to connect
 		ping to see if it's online? or is that already built in?
-LOW:	allow user to save their $VPNUSERNAME if they so wish (need to provide user notice that this may be a security risk)
 HIGH:	need to make connect and disconnect useful
 		integrate the native openvpn commands (they also share variables for udp/tcp)
 			offer ipv4 & ipv6 support
@@ -35,6 +34,9 @@ MID:	run a check to see if the 'panic' command is properly active
 	# completed via fn_check_connectivity
 LOW:	the `hosts` command is not properly interpretting the $2
 	# fixed a number of $2 handling
+LOW:	allow user to save their $VPNUSERNAME if they so wish (need to provide user notice that this may be a security risk)
+	# use $1 'user"
+
 
 
 
