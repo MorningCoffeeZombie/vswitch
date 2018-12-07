@@ -92,7 +92,7 @@ function fn_enable_vswitch(){
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
 		NEWIP=`curl icanhazip.com`
 		printf "VPN killswitch	\t ${GREEN}ENABLED${NC} \n"
-		printf "Your new IP is	\t ${GREEN}${NEWIP}${NC} \n" 
+		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC} \n" 
 	fi
 }
 # Used by `remove` command to list all resources and uninstall vswitch
@@ -109,6 +109,15 @@ function fn_check_distro(){
 	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
 		alias eopkg="apt-get"
 		DISTRO="debian"
+	fi
+}
+function fn_check_connectivity(){
+	if curl icanhazip.com &>/dev/null && curl http://www.google.com &>/dev/null && dig +short myip.opendns.com @resolver1.opendns.com &>/dev/null && wget -qO- ipinfo.io/ip &>/dev/null && curl checkip.amazonaws.com &>/dev/null && dig TXT +short o-o.myaddr.l.google.com @ns1.google.com &>/dev/null; then
+		# If you CAN curl then:
+		UFWSTATUS="untunneled"
+	else
+		# If you CANNOT curl & wget & dig then:
+		UFWSTATUS="tunneled"
 	fi
 }
 function fn_vswitch_ascii(){
@@ -288,8 +297,8 @@ if [[ "$1" = stat* ]]; then
 	fi
 fi
 if [[ "$1" = who* ]]; then
-		NEWIP=`curl icanhazip.com`
-		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC} \n" 
+		NEWIP=`curl icanhazip.com` &>/dev/null
+		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
 	
 
@@ -382,9 +391,19 @@ if [[ "$1" = panic* ]] || [ "$1" = "pan" ]; then
 	sudo echo "y" | sudo ufw reset &>/dev/null
 	sudo ufw default deny incoming &>/dev/null
 	sudo ufw default deny outgoing &>/dev/null
+	sudo ufw enable &>/dev/null
 	#nmcli networking connectivity &>/dev/null
 	#nmcli general status &>/dev/null
-	echo "${BOLDFONT}PANIC MODE ENABLED${NORMALFONT}"
+	fn_check_connectivity
+	if [ "$UFWSTATUS" = "tunneled" ]; then
+		echo "${BOLDFONT}PANIC MODE ENABLED${NORMALFONT}"
+	elif [ "$UFWSTATUS" = "untunneled" ]; then
+		printf "${RED}${BOLDFONT}ERROR!${NORMALFONT}${NC} \n"
+		printf "${RED}${BOLDFONT}PANIC MODE FAILURE!${NORMALFONT}${NC} \n"
+	else
+		printf "${RED}${BOLDFONT}AN UNKNOWN ERROR OCCURED...${NORMALFONT}${NC} \n"
+		printf "${RED}${BOLDFONT}ASSUME THE WORST!${NORMALFONT}${NC} \n"
+	fi
 fi
 if [[ "$1" = unpanic* ]]; then
 	nmcli networking on
@@ -435,6 +454,16 @@ fi
 
 # Echo the contents of the ISO array:
 #echo "${ar_2_digit_iso[*]}"
+
+# List of public IP resolvers (as commands):
+#curl icanhazip.com
+#dig +short myip.opendns.com @resolver1.opendns.com
+#dig TXT +short o-o.myaddr.l.google.com @ns1.google.com
+#curl ipinfo.io/ip
+#wget -qO- ipinfo.io/ip
+#curl checkip.amazonaws.com
+
+
 
 
 

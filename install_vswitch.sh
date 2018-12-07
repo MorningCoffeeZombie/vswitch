@@ -26,6 +26,7 @@ function fn_vswitch_ascii(){
 	echo "|___/____/ |__/|__/_/\__/\___/_/ /_/ "
 }
 
+cd $INSTALLDIR
 
 # Questionaire: offer a more secure hosts file
 fn_vswitch_ascii
