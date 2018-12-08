@@ -483,7 +483,23 @@ fi
 #curl checkip.amazonaws.com
 
 
-
-
+# http://blog.librato.com/posts/jq-json
+# https://stackoverflow.com/questions/18592173/select-objects-based-on-value-of-variable-in-object-using-jq
+#function fn_number_nord_servers(){
+#	NORDAPI=$(curl --silent https://nordvpn.com/api/server)
+#	echo ${NORDAPI} | jq length
+#}
+#function fn_dump_all_json(){
+#	NORDAPI=$(curl --silent https://nordvpn.com/api/server)
+#	echo ${NORDAPI} | jq .
+#}
+#function fn_list_top_level_containers(){
+#	NORDAPI=$(curl --silent https://nordvpn.com/api/server)
+#	echo ${NORDAPI} | jq '.[]|keys' | sort | uniq -c
+#}
+#function fn_select_load_gt_50(){
+#	NORDAPI=$(curl --silent https://nordvpn.com/api/server)
+#	echo ${NORDAPI} | jq '.[] | select((.load>=50))'
+#}
 
 
