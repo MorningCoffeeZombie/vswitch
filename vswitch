@@ -314,7 +314,7 @@ if [[ "$1" = stat* ]]; then
 	fi
 fi
 if [[ "$1" = who* ]]; then
-		NEWIP=`curl icanhazip.com` &>/dev/null
+		NEWIP=`curl --silent icanhazip.com` &>/dev/null
 		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
 	
@@ -370,10 +370,10 @@ if [[ "$1" = con* ]]; then
 # Apparently nohup doesnt get along with with sudo and/or openvpn, can't use "&" because it messses with entering credentials
 # openvpn commands work with Debian but not with Solus
 	if [ "$VPNHOST" = "nordvpn" ] && [[ $DISTRO = *ebian* ]]; then
-		IPBEFORECONNECT=`curl icanhazip.com`
+		IPBEFORECONNECT=`curl --silent icanhazip.com`
 		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
 		sudo openvpn /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
-		IPAFTERCONNECT=`curl icanhazip.com`
+		IPAFTERCONNECT=`curl --silent icanhazip.com`
 			if [ "$IPBEFORECONNECT" = "$IPAFTERCONNECT" ]; then
 				printf "${RED}${BOLDFONT}VPN CONNECTION FAILED!${NORMALFONT}${NC} \n"
 				printf "${RED}${BOLDFONT}YOUR IP HAS NOT CHANGED!${NORMALFONT}${NC} \n"

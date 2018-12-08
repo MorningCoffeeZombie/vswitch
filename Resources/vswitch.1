@@ -88,6 +88,26 @@ Set \fBudp\fR as the preferred protocol for connecting to VPNs
 Prevent all non-tunneled communications
 
 
+.SH "ESCALATING TUNNELING"
+\fBvswitch protocol udp\fR
+\fBvswitch\fR allows users to immediately cut all connections (tunneled or not) with it's commands. To reestablish unfiltered connections users must de-escalate in the proper order.
+.TP
+This was done as a security measure to allow termination of running programs before immediately regressing to an untulleded state. Below is the escalation pyramid with the safest settings at the top and least safe at the bottom.
+.IP "" 4
+^
+.br
+|	\fBvswitch panic\fR
+.br
+|	\fBvswitch unpanic\fR
+.br
+|	\fBvswitch on\fR
+.br
+|	\fBvswitch off\fR
+.br
+v
+
+
+
 .
 .SH "SEE ALSO"
 \fBOpenVPN\fR
