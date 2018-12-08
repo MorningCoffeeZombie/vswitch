@@ -323,6 +323,8 @@ fi
 # CONNECT AND ENABLE
 ####################
 function fn_recommend_server(){
+# JSON API of interes:	https://nordvpn.com/api/server/
+# JSON API of interes:	https://nordvpn.com/api/server/stats
 # Forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
 	# Need something here
 	servers=$(curl --silent https://nordvpn.com/api/server/stats)
@@ -349,7 +351,7 @@ function fn_recommend_server(){
 
 	# Print out results
 	if [ ${#results[@]} -eq 0 ]; then
-		>&2 echo "$(tput setaf 1)No servers found :("
+		>&2 echo "$(tput setaf 1)No servers found "
 	else
 		printf "${BOLDFONT}SERVER \t\t      POPULATION${NORMALFONT}\n"
 		for key in "${!results[@]}"
