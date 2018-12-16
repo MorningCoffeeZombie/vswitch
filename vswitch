@@ -324,15 +324,14 @@ if [[ "$1" = speed* ]]; then
 		while true; do
 		    read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? " yn
 		    case $yn in
-		        [Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; speedtest --simple --secure; break;;
+		        [Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; vswitch speedtest; break;;
 		        [Nn]* ) echo "speedtest-cli not installed."; break;;
 		        * ) echo "Please answer yes or no.";;
 		    esac
 		done
-	else
+	elif [[ "$2" = "" ]] || [[ "$2" != * ]]; then
 		speedtest --simple --secure
-	fi
-	if [[ "$2" = byt* ]]; then
+	elif [[ "$2" = byt* ]]; then
 		speedtest --simple --secure --bytes
 	fi
 fi
