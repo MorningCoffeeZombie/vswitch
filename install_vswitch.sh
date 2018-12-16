@@ -16,6 +16,9 @@ function fn_check_distro(){
 	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
 		alias eopkg="apt-get"
 		DISTRO="debian"
+	elif [[ $(apropos "package manager" &>/dev/null) = *pacman* ]]; then
+		# If the `apropos` command is not working you'll need to run `sudo mandb`
+		DISTRO="arch"
 	fi
 }
 function fn_vswitch_ascii(){
@@ -125,6 +128,7 @@ sudo cp Resources/vswitch.1 /usr/share/man/man1/
 sudo cp Resources/vswitch_autocomplete.sh /etc/bash_completion.d/vswitch
 sudo chmod +rx /etc/bash_completion.d/vswitch
 source /etc/bash_completion.d/vswitch
+#sudo mandb
 
 # Adding call for custom functions to ~/.bashrc
 #sudo echo "# Added by \"LinuxVPNKillswitch\": ">>/etc/skel/.bashrc

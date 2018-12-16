@@ -4,7 +4,7 @@ _vswitch()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	opts="panic protocol remove enable distrobution disable recommend connect disconnect status unpanic update username ipversion host help who region location"
+	opts="panic protocol remove enable distrobution disable recommend connect disconnect status unpanic update username ipversion host help who region location speedtest"
 
 	if [[ ${cur} == * ]] ; then
 		COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )

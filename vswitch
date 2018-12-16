@@ -109,6 +109,8 @@ function fn_check_distro(){
 	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
 		alias eopkg="apt-get"
 		DISTRO="debian"
+	elif [[ $(apropos "package manager" &>/dev/null) = *pacman* ]]; then
+		DISTRO="arch"
 	fi
 }
 function fn_check_connectivity(){
@@ -176,7 +178,7 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo mkdir /etc/openvpn/${VPNHOST,,}
 		cd /etc/openvpn/${VPNHOST,,}
 		sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-		sudo unzip ovpn.zip
+		sudo echo "N" | sudo unzip ovpn.zip # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm ovpn.zip
 		cd /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}   # Sets current ovpn_ dir to declared variable in lower case
 	elif [ "$VPNHOST" = "public" ]; then
@@ -317,6 +319,23 @@ if [[ "$1" = who* ]]; then
 		NEWIP=`curl --silent icanhazip.com` &>/dev/null
 		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
+if [[ "$1" = speed* ]]; then
+	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null || [[ $(sudo eopkg check speedtest-cli) != *integrity*of*speedtest-cli*OK* ]]; then
+		while true; do
+		    read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? " yn
+		    case $yn in
+		        [Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; speedtest --simple --secure; break;;
+		        [Nn]* ) echo "speedtest-cli not installed."; break;;
+		        * ) echo "Please answer yes or no.";;
+		    esac
+		done
+	else
+		speedtest --simple --secure
+	fi
+	if [[ "$2" = byt* ]]; then
+		speedtest --simple --secure --bytes
+	fi
+fi
 	
 
 ####################
@@ -336,6 +355,7 @@ function fn_recommend_server(){
 	while IFS="=" read -r key value
 	do
 	results[$key]="$value"
+	BESTSERVERRAWOUTPUT=$key
 	BESTSERVER=$key.$PROTOCOL.ovpn
 	done < <(jq --compact-output -r --arg location "$REGIONPREF" --arg capacity "$capacity" --arg limit "$limit" \
 	'[. |
@@ -483,6 +503,11 @@ fi
 #curl checkip.amazonaws.com
 
 
+# Trying to display ping for the top rec server (used in `connect` command)
+	#$BESTSERVERPING=$(ping -c 4 $BESTSERVERRAWOUTPUT | tail -1 | awk '{print $4}' | cut -d '/' -f 2)
+	#printf "$fn_recommend_server	\t$BESTSERVERPINGms \n"
+
+
 # http://blog.librato.com/posts/jq-json
 # https://stackoverflow.com/questions/18592173/select-objects-based-on-value-of-variable-in-object-using-jq
 #function fn_number_nord_servers(){
@@ -501,5 +526,8 @@ fi
 #	NORDAPI=$(curl --silent https://nordvpn.com/api/server)
 #	echo ${NORDAPI} | jq '.[] | select((.load>=50))'
 #}
-
+#function fn_2_queries(){
+#	NORDAPI=$(curl --silent https://nordvpn.com/api/server)
+#	echo ${NORDAPI} | jq '.[] | select(.flag == "US" and .load<=25)'
+#}
 
