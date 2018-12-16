@@ -341,21 +341,22 @@ fi
 # CONNECT AND ENABLE
 ####################
 function fn_recommend_server(){
-# JSON API of interes:	https://nordvpn.com/api/server/
-# JSON API of interes:	https://nordvpn.com/api/server/stats
+# JSON API of interest:	https://nordvpn.com/api/server/
+# JSON API of interest:	https://nordvpn.com/api/server/stats
 # Forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
 	# Need something here
 	servers=$(curl --silent https://nordvpn.com/api/server/stats)
 	capacity="30"
+	#limit="20"
 
 
 	# Declare and populate array
 	declare -A results
 	while IFS="=" read -r key value
 	do
-	results[$key]="$value"
-	BESTSERVERRAWOUTPUT=$key
-	BESTSERVER=$key.$PROTOCOL.ovpn
+		results[$key]="$value"
+		BESTSERVERRAWOUTPUT=$key
+		BESTSERVER=$key.$PROTOCOL.ovpn
 	done < <(jq --compact-output -r --arg location "$REGIONPREF" --arg capacity "$capacity" --arg limit "$limit" \
 	'[. |
 	to_entries[] |
