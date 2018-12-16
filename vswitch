@@ -124,8 +124,8 @@ function fn_check_connectivity(){
 	fi
 }
 function fn_vswitch_ascii(){
-	echo "                      _ __       __  "
-	echo " _   ________      __(_) /______/ /_ "
+	echo "					  _ __	   __  "
+	echo " _   ________	  __(_) /______/ /_ "
 	echo "| | / / ___/ | /| / / / __/ ___/ __ \ "
 	echo "| |/ (__  )| |/ |/ / / /_/ /__/ / / /"
 	echo "|___/____/ |__/|__/_/\__/\___/_/ /_/ "
@@ -317,17 +317,17 @@ if [[ "$1" = stat* ]]; then
 fi
 if [[ "$1" = who* ]]; then
 		NEWIP=`curl --silent icanhazip.com` &>/dev/null
-		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC}\n" 
+		printf "Your current IP is:	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
 if [[ "$1" = speed* ]]; then
 	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null || [[ $(sudo eopkg check speedtest-cli) != *integrity*of*speedtest-cli*OK* ]]; then
 		while true; do
-		    read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? " yn
-		    case $yn in
-		        [Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; vswitch speedtest; break;;
-		        [Nn]* ) echo "speedtest-cli not installed."; break;;
-		        * ) echo "Please answer yes or no.";;
-		    esac
+			read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? " yn
+			case $yn in
+				[Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; vswitch speedtest; break;;
+				[Nn]* ) echo "speedtest-cli not installed."; break;;
+				* ) echo "Please answer yes or no.";;
+			esac
 		done
 	elif [[ "$2" = "" ]] || [[ "$2" != * ]]; then
 		speedtest --simple --secure
@@ -372,7 +372,7 @@ function fn_recommend_server(){
 	if [ ${#results[@]} -eq 0 ]; then
 		>&2 echo "$(tput setaf 1)No servers found "
 	else
-		printf "${BOLDFONT}SERVER \t\t      POPULATION${NORMALFONT}\n"
+		printf "${BOLDFONT}SERVER \t\t	  POPULATION${NORMALFONT}\n"
 		for key in "${!results[@]}"
 		do
 			echo -e "$(tput setaf 6 && tput bold)$key $(tput sgr0) ${results[$key]}%"
@@ -406,9 +406,8 @@ if [[ "$1" = con* ]]; then
 #		sudo openvpn /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 	fi
 	if [[ $DISTRO = *olus* ]]; then
-		printf "${YELLOW}${BOLDFONT}Solus OS does not currently support ovpn CLI${NORMALFONT}${NC} \n"
+		printf "${YELLOW}${BOLDFONT}Solus OS does not currently support OpenVPN CLI${NORMALFONT}${NC} \n"
 		printf "${YELLOW}${BOLDFONT}Please connect via GUI${NORMALFONT}${NC} \n"
-#	else
 #		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 #		sudo openvpn /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 	fi
@@ -466,12 +465,12 @@ fi
 ###########
 if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
 	while true; do
-	    read -p "Remove vswitch? (y/n) " yn
-	    case $yn in
-	        [Yy]* ) fn_uninstall_list; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch"; break;;
-	        [Nn]* ) echo "vswitch will not be removed"; break;;
-	        * ) echo "Please answer yes or no.";;
-	    esac
+		read -p "Remove vswitch? (y/n) " yn
+		case $yn in
+			[Yy]* ) fn_uninstall_list; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch"; break;;
+			[Nn]* ) echo "vswitch will not be removed"; break;;
+			* ) echo "Please answer yes or no.";;
+		esac
 	done
 fi
 
