@@ -1,0 +1,41 @@
+https://wiki.archlinux.org/index.php/Uncomplicated_Firewall
+###########################################################
+https://www.cb-net.co.uk/linux/using-the-openvpn-client-and-ufw-to-force-traffic-via-a-tun-vpn-interface-on-ubuntu-server-16-04/
+###############################################################################################
+https://ubuntu-mate.community/t/vpn-how-to-connect-successfully-securely-ufw-openvpn-ubuntumate-15-04/1452
+###################################################################################################
+
+
+Users needing to run a VPN such as OpenVPN or WireGuard will need to adjust the DEFAULT_FORWARD_POLICY variable in /etc/default/ufw from a value of "DROP" to "ACCEPT" for proper VPN operation.
+
+App profiles are stored in /etc/ufw/applications.d and sometimes /etc/services
+
+
+
+
+#Only needs to be run the first time after install:
+$ ufw enable
+
+#Same with this settings adjustment:
+sudo nano /etc/default/ufw
+#Then set "IPV6=yes" (no quote marks)
+
+
+$ ufw logging off
+
+
+$ sudo ufw allow openvpn
+
+
+
+
+
+
+# LOG DUMP:
+
+sudo ufw status verbose
+nmcli general status
+curl icanhazip.com
+speedtest --simple --secure
+
+
