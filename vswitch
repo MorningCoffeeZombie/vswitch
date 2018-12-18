@@ -443,14 +443,13 @@ if [[ "$1" = con* ]]; then
 #		sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 	fi
 	if [[ $DISTRO = *olus* ]]; then
-		printf "${YELLOW}${BOLDFONT}Solus OS does not currently support OpenVPN CLI${NORMALFONT}${NC} \n"
-		printf "${YELLOW}${BOLDFONT}Please connect via GUI${NORMALFONT}${NC} \n"
+		nmcli c up /etc/openvpn/${VPNHOST,,}/$BESTSERVER --ask
 #		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 #		sudo openvpn /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 	fi
 fi
 if [[ "$1" = discon* ]]; then
-	sudo killall openvpn
+	sudo killall openvpn	# Disconnecting via OpenVPN (not NMCLI) as NMCLI is just an overlay for OVPN tunneling.
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
 		printf "${BOLDFONT}VPN Required:${NORMALFONT}	\t ${GREEN}YES${NC} \n"
 		printf "Use ${BOLDFONT}vswitch off${NORMALFONT} to renable untunneled connections. \n"

@@ -9,9 +9,6 @@
 REVIEW:	https://github.com/gjedeer/nordvpn/issues/1
 MID:	'recommender' can find nordvpn servers that are unofficial?!?
 LOW:	'recommender' currently only works for NordVPN
-HIGH:	need to make connect and disconnect useful
-		integrate the native openvpn commands (they also share variables for udp/tcp)
-			offer ipv4 & ipv6 support
 LOW:	should i offer to restore hosts file during uninstall?
 
 
@@ -38,6 +35,11 @@ HIGH:	grab the top-recommended server and prepare to connect
 MED:	for some reason you cannot connect to a vpn if 'vswitch on' was activated. need to allow connection during firewall or, at least, prioritize command properly
 		this is 'sorta' fixed...need to play around a little bit more with `ufw allow openvpn`
 		turns out all i needed was `ufw allow out openvpn`
+HIGH:	need to make connect and disconnect useful
+		integrate the native openvpn commands (they also share variables for udp/tcp)
+			offer ipv4 & ipv6 support
+		The issues with `openvpn` command are due to NMCLI being the proper overlay for connections. Use `nmcli c up file.ovpn --ask` to connect
+
 
 
 
