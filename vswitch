@@ -166,14 +166,18 @@ if [[ "$1" = distro* ]] || [ "$1" = "os" ]; then
 	done
 fi
 if [ "$1" = "update" ] || [ "$1" = "up" ]; then
-# Taken from:   https://nordvpn.com/tutorials/linux/openvpn/
+# Nord help:   https://nordvpn.com/tutorials/linux/openvpn/
+	fn_check_distro
 	cd  /etc/openvpn
-	if [[ $(uname -s) = *olus* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]] || [[ $(apropos "package manager") = *eopkg* ]] || [ $DISTRO = "solus" ]; then
+	if [ $DISTRO = "solus" ]; then
 		sudo eopkg install ca-certificates -y
 		sudo eopkg install ca-certs -y
-	else
+	elif [ $DISTRO = "debian" ];then
 		sudo apt-get install ca-certificates -y
 		sudo apt-get install ca-certs -y
+	elif [ $DISTRO = "arch" ]; then
+		yes | sudo pacman -Syu ca-certificates
+		yes | sudo pacman -Syu ca-certs
 	fi
 	if [ "$VPNHOST" = "nordvpn" ]; then
 		sudo mkdir /etc/openvpn/${VPNHOST,,}
@@ -350,11 +354,11 @@ if [[ "$1" = who* ]]; then
 		printf "Your current IP is:	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
 if [[ "$1" = speed* ]]; then
-	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null || [[ $(sudo eopkg check speedtest-cli) != *integrity*of*speedtest-cli*OK* ]]; then
+	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null || [[ $(sudo eopkg check speedtest-cli) != *integrity*of*speedtest-cli*OK* ]] || [[ $(pacman -Qi speedtest-cli) != local/* ]]; then
 		while true; do
 			read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? " yn
 			case $yn in
-				[Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; vswitch speedtest; break;;
+				[Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; pacman -Syu speedtest-cli; vswitch speedtest; break;;
 				[Nn]* ) echo "speedtest-cli not installed."; break;;
 				* ) echo "Please answer yes or no.";;
 			esac
@@ -425,8 +429,8 @@ if [[ "$1" = con* ]]; then
 # openvpn commands work with Debian but not with Solus
 	if [ "$VPNHOST" = "nordvpn" ] && [[ $DISTRO = *ebian* ]]; then
 		IPBEFORECONNECT=`curl --silent icanhazip.com`
-		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
-		sudo openvpn /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+		sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+		sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
 		IPAFTERCONNECT=`curl --silent icanhazip.com`
 			if [ "$IPBEFORECONNECT" = "$IPAFTERCONNECT" ]; then
 				printf "${RED}${BOLDFONT}VPN CONNECTION FAILED!${NORMALFONT}${NC} \n"
@@ -435,8 +439,8 @@ if [[ "$1" = con* ]]; then
 				printf "${GREEN}${BOLDFONT}Your IP has changed to: \t $IPAFTERCONNECT${NORMALFONT}${NC} \n"
 			fi
 #	else
-#		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
-#		sudo openvpn /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+#		sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+#		sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 	fi
 	if [[ $DISTRO = *olus* ]]; then
 		printf "${YELLOW}${BOLDFONT}Solus OS does not currently support OpenVPN CLI${NORMALFONT}${NC} \n"

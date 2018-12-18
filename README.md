@@ -13,8 +13,11 @@ network-manager-openvpn-gnome	# Required for Debian based systems
 # Compatibility
 Linux: Solus OS  
 Linux: Debian based systems (anything using *apt-get* for package management)  
+Linux: Arch based systems (anything using *pacman* for package management) (currently untested)  
 VPN Provider: NordVPN  
 VPN Provider: Publicly available VPNs (use at your own risk)  
+VPN Provider: PrivateInternetAccess (semi supported)  
+VPN Provider: IP Vanish (semi supported)  
 
 # LinuxVPNKillswitch (vswitch)
 **vswitch**: "VPN kill Switch"  

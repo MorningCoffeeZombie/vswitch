@@ -93,6 +93,25 @@ if [[ $DISTRO="debian" ]]; then
 		sudo apt-get install jq -y
 	fi
 fi
+if [[ $DISTRO="arch" ]]; then
+	sudo pacman -Syu install ca-certificates
+	sudo pacman -Syu install ca-certs
+	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null; then
+		sudo pacman -Syu install ufw -y
+	fi
+	if [[ $(dpkg -s openvpn | grep -i status) = *not*installed* ]] &>/dev/null; then
+		sudo pacman -Syu install openvpn -y
+	fi
+	if [[ $(dpkg -s network-manager-openvpn | grep -i status) = *not*installed* ]] &>/dev/null; then
+		sudo pacman -Syu install network-manager-openvpn -y
+	fi
+	if [[ $(dpkg -s network-manager-openvpn-gnome | grep -i status) = *not*installed* ]] &>/dev/null; then
+		sudo pacman -Syu install network-manager-openvpn-gnome -y
+	fi
+	if [[ $(dpkg -s jq) = *not*installed* ]] &>/dev/null; then
+		sudo pacman -Syu install jq -y
+	fi
+fi
 
 
 # Set ufw to accept connections via OpenVPN (if firewall is on)
