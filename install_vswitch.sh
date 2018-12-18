@@ -22,8 +22,8 @@ function fn_check_distro(){
 	fi
 }
 function fn_vswitch_ascii(){
-	echo "					  _ __	   __  "
-	echo " _   ________	  __(_) /______/ /_ "
+	echo "                      _ __       __  "
+	echo " _   ________      __(_) /______/ /_ "
 	echo "| | / / ___/ | /| / / / __/ ___/ __ \ "
 	echo "| |/ (__  )| |/ |/ / / /_/ /__/ / / /"
 	echo "|___/____/ |__/|__/_/\__/\___/_/ /_/ "
@@ -93,6 +93,12 @@ if [[ $DISTRO="debian" ]]; then
 		sudo apt-get install jq -y
 	fi
 fi
+
+
+# Set ufw to accept connections via OpenVPN (if firewall is on)
+sudo cp /etc/default/ufw /etc/default/ufw.BAK
+sudo sed -i '/DEFAULT_FORWARD_POLICY/ s/.*/DEFAULT_FORWARD_POLICY='\"ACCEPT\"'/' /etc/default/ufw
+sudo sed -i '/IPV6/ s/.*/IPV6='yes'/' /etc/default/ufw
 
 
 # Saving known VPNs

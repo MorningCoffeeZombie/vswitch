@@ -29,7 +29,7 @@ function fn_check_conf(){
 		sudo printf "VPNHOST=nordvpn\n" | sudo tee --append /etc/openvpn/vswitch.conf
 		sudo printf "VPNUSERNAME=\n" | sudo tee --append /etc/openvpn/vswitch.conf
 		sudo printf "DISTRO=solus\n" | sudo tee --append /etc/openvpn/vswitch.conf
-		sudo printf "TUNNEL=tun+\n" | sudo tee --append /etc/openvpn/vswitch.conf
+		sudo printf "TUNNEL=tun0\n" | sudo tee --append /etc/openvpn/vswitch.conf
 		sudo printf "IPVERSION=4\n" | sudo tee --append /etc/openvpn/vswitch.conf
 		sudo chmod 777 /etc/openvpn/vswitch.conf
 		echo "New config file successfully created"
@@ -94,6 +94,7 @@ function fn_enable_vswitch(){
 		printf "VPN killswitch	\t ${GREEN}ENABLED${NC} \n"
 		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC} \n" 
 	fi
+	sudo ufw allow openvpn
 }
 # Used by `remove` command to list all resources and uninstall vswitch
 function fn_uninstall_list(){
@@ -124,8 +125,8 @@ function fn_check_connectivity(){
 	fi
 }
 function fn_vswitch_ascii(){
-	echo "					  _ __	   __  "
-	echo " _   ________	  __(_) /______/ /_ "
+	echo "                      _ __       __  "
+	echo " _   ________      __(_) /______/ /_ "
 	echo "| | / / ___/ | /| / / / __/ ___/ __ \ "
 	echo "| |/ (__  )| |/ |/ / / /_/ /__/ / / /"
 	echo "|___/____/ |__/|__/_/\__/\___/_/ /_/ "
@@ -178,8 +179,8 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo mkdir /etc/openvpn/${VPNHOST,,}
 		cd /etc/openvpn/${VPNHOST,,}
 		sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-		sudo echo "N" | sudo unzip ovpn.zip # Echo "N" to not overwrite any of the existing VPN files
-		sudo rm ovpn.zip
+		sudo echo "N" | sudo unzip ovpn.zip* # Echo "N" to not overwrite any of the existing VPN files
+		sudo rm ovpn.zip*
 		cd /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}   # Sets current ovpn_ dir to declared variable in lower case
 	elif [ "$VPNHOST" = "public" ]; then
 		sudo mkdir /etc/openvpn/${VPNHOST,,}
@@ -197,6 +198,19 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 		cd /etc/openvpn/
 		rm /etc/openvpn/${VPNHOST,,}/*ovpn.1	# Remove accidentally duplicated files
+	elif [ "$VPNHOST" = "pia" ]; then
+		sudo mkdir /etc/openvpn/${VPNHOST,,}
+		sudo mkdir /etc/openvpn/${VPNHOST,,}/ovpn_udp
+		cd /etc/openvpn/${VPNHOST,,}/ovpn_udp
+		sudo wget https://www.privateinternetaccess.com/openvpn/openvpn.zip
+		sudo echo "N" | sudo unzip openvpn*.zip* # Echo "N" to not overwrite any of the existing VPN files
+		sudo rm openvpn*.zip*
+		sudo mkdir /etc/openvpn/${VPNHOST,,}/ovpn_tcp
+		cd /etc/openvpn/${VPNHOST,,}/ovpn_tcp
+		sudo wget https://www.privateinternetaccess.com/openvpn/openvpn-tcp.zip
+		sudo echo "N" | sudo unzip openvpn*.zip* # Echo "N" to not overwrite any of the existing VPN files
+		sudo rm openvpn*.zip*
+		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 	fi
 fi
 if [[ "$1" = host* ]]; then
@@ -204,14 +218,18 @@ if [[ "$1" = host* ]]; then
 		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='nordvpn'/' /etc/openvpn/vswitch.conf
 	elif [[ "${2,,}" = publ* ]]; then
 		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='public'/' /etc/openvpn/vswitch.conf
+	elif [[ "${2,,}" = pia* ]] || [[ "${2,,}" = private* ]]; then
+		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='pia'/' /etc/openvpn/vswitch.conf
 	else
 		fn_check_conf
 		PS3='Choose from a list of supported VPN providers: '
-		options=("NordVPN" "Public" "Quit")
+		options=("NordVPN" "PIA" "Public" "Quit")
 		select provider in "${options[@]}"
 		do
 		case $provider in
 			"NordVPN")
+				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; echo "$provider entered"; break;;
+			"PIA")
 				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; echo "$provider entered"; break;;
 			"Public")
 				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; printf "$provider entered. ${RED}${BOLDFONT}PUBLIC VPNs ARE NOT ASSUMED TO BE SAFE!${NC}${NORMALFONT} \n"; break;;	
@@ -341,8 +359,10 @@ fi
 # CONNECT AND ENABLE
 ####################
 function fn_recommend_server(){
-# JSON API of interest:	https://nordvpn.com/api/server/
+# JSON API of interest:	https://nordvpn.com/api/server
+# JSON API of interest:	https://api.nordvpn.com/server
 # JSON API of interest:	https://nordvpn.com/api/server/stats
+# https://nord.readthedocs.io/en/latest/reference/api.html
 # Forked from:	https://github.com/mrzool/nordvpn-server-find/blob/master/nordvpn-server-find
 	# Need something here
 	servers=$(curl --silent https://nordvpn.com/api/server/stats)
