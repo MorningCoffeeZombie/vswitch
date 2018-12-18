@@ -181,6 +181,11 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 		sudo echo "N" | sudo unzip ovpn.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm ovpn.zip*
+		sudo mkdir /etc/openvpn/${VPNHOST,,}/certificates
+		cd /etc/openvpn/${VPNHOST,,}/certificates
+		sudo wget https://downloads.nordcdn.com/configs/archives/certificates/servers.zip
+		sudo echo "N" | sudo unzip servers.zip* # Echo "N" to not overwrite any of the existing VPN files
+		sudo rm servers.zip*
 		cd /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}   # Sets current ovpn_ dir to declared variable in lower case
 	elif [ "$VPNHOST" = "public" ]; then
 		sudo mkdir /etc/openvpn/${VPNHOST,,}
@@ -210,6 +215,13 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo wget https://www.privateinternetaccess.com/openvpn/openvpn-tcp.zip
 		sudo echo "N" | sudo unzip openvpn*.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm openvpn*.zip*
+		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
+	elif [ "$VPNHOST" = "ipvanish" ]; then
+		sudo mkdir /etc/openvpn/${VPNHOST,,}
+		cd /etc/openvpn/${VPNHOST,,}
+		wget https://www.ipvanish.com/software/configs/configs.zip
+		sudo echo "N" | sudo unzip openvpn*.zip* # Echo "N" to not overwrite any of the existing VPN files
+		sudo rm configs*.zip*
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 	fi
 fi
