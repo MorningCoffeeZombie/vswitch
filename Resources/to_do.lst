@@ -12,7 +12,6 @@ LOW:	'recommender' currently only works for NordVPN
 HIGH:	need to make connect and disconnect useful
 		integrate the native openvpn commands (they also share variables for udp/tcp)
 			offer ipv4 & ipv6 support
-MED:	for some reason you cannot connect to a vpn if 'vswitch on' was activated. need to allow connection during firewall or, at least, prioritize command properly
 LOW:	should i offer to restore hosts file during uninstall?
 
 
@@ -36,7 +35,9 @@ LOW:	allow user to save their $VPNUSERNAME if they so wish (need to provide user
 	# use $1 'user"
 HIGH:	grab the top-recommended server and prepare to connect
 	ping to see if it's online? or is that already built in?
-
+MED:	for some reason you cannot connect to a vpn if 'vswitch on' was activated. need to allow connection during firewall or, at least, prioritize command properly
+		this is 'sorta' fixed...need to play around a little bit more with `ufw allow openvpn`
+		turns out all i needed was `ufw allow out openvpn`
 
 
 

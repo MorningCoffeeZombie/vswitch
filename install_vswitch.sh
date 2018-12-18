@@ -96,8 +96,9 @@ fi
 
 
 # Set ufw to accept connections via OpenVPN (if firewall is on)
-sudo cp /etc/default/ufw /etc/default/ufw.BAK
-sudo sed -i '/DEFAULT_FORWARD_POLICY/ s/.*/DEFAULT_FORWARD_POLICY='\"ACCEPT\"'/' /etc/default/ufw
+sudo cp /etc/default/ufw /etc/default/ufw.BAK$TODAYISO
+sudo ufw default allow FORWARD # Below is a more dangerous way of accomplishing this same command:
+#sudo sed -i '/DEFAULT_FORWARD_POLICY/ s/.*/DEFAULT_FORWARD_POLICY='\"ACCEPT\"'/' /etc/default/ufw
 sudo sed -i '/IPV6/ s/.*/IPV6='yes'/' /etc/default/ufw
 
 

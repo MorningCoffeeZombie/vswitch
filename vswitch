@@ -90,11 +90,11 @@ function fn_enable_vswitch(){
 		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
 	fi
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
-		NEWIP=`curl icanhazip.com`
+		NEWIP=`curl icanhazip.com` &>/dev/null
 		printf "VPN killswitch	\t ${GREEN}ENABLED${NC} \n"
 		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC} \n" 
 	fi
-	sudo ufw allow openvpn
+	sudo ufw allow out openvpn &>/dev/null
 }
 # Used by `remove` command to list all resources and uninstall vswitch
 function fn_uninstall_list(){
