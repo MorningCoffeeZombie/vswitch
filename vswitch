@@ -115,6 +115,26 @@ function fn_check_distro(){
 		DISTRO="arch"
 	fi
 }
+function fn_connect_vpn_nmcli(){
+	nmcli connection import type openvpn file $BESTSERVERRAWOUTPUT.${PROTOCOL,,}
+	if [ "$VPNUSERNAME" = "" ] && sudo grep -qi "username=" "/etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}";then
+		# Condition: wrong username in file
+		read -p "Enter your $VPNHOST username: " VPNUSERNAME
+		sudo sed -i '/username/ s/.*/username='$VPNUSERNAME'/' /etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}
+	elif [ "$VPNUSERNAME" != "" ] && sudo grep -qi "username=" "/etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}";then
+		# Condition: wrong username in file
+		sudo sed -i '/username/ s/.*/username='$VPNUSERNAME'/' /etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}
+	elif [ "$VPNUSERNAME" = "" ] && ! sudo grep -qi "username=" "/etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}";then
+		# ask uname and write to file
+		read -p "Enter your $VPNHOST username: " VPNUSERNAME
+		nmcli connection modify $BESTSERVERRAWOUTPUT.${PROTOCOL,,} +vpn.data username=$VPNUSERNAME
+	elif [ "$VPNUSERNAME" != "" ] && ! sudo grep -qi "username=" "/etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}";then 
+		# just write to file
+		nmcli connection modify $BESTSERVERRAWOUTPUT.${PROTOCOL,,} +vpn.data username=$VPNUSERNAME
+		#sudo sed '/^\[vpn\]/a\username='$VPNUSERNAME'' /etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}
+	fi
+	nmcli c up /etc/openvpn/${VPNHOST,,}/$BESTSERVERRAWOUTPUT --ask
+}
 function fn_check_connectivity(){
 	# The idea is: if you can't find IP from any of these (generally reliable) sites...you're probably actively filtering connections.
 	if curl $IPFINDERURL &>/dev/null && curl http://www.google.com &>/dev/null && dig +short myip.opendns.com @resolver1.opendns.com &>/dev/null && wget -qO- ipinfo.io/ip &>/dev/null && curl checkip.amazonaws.com &>/dev/null && dig TXT +short o-o.myaddr.l.google.com @ns1.google.com &>/dev/null; then
@@ -350,6 +370,7 @@ if [[ "$1" = stat* ]]; then
 	printf "${BOLDFONT}Distro:${NORMALFONT}	\t$DISTRO \n"
 	printf "${BOLDFONT}Tunnel:${NORMALFONT}	\t$TUNNEL \n"
 	nmcli general status
+	nmcli device wifi list
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
 		printf "${BOLDFONT}VPN Required:${NORMALFONT}	\t ${GREEN}Yes${NC} \n"
 	fi
@@ -443,7 +464,7 @@ if [[ "$1" = rec* ]]; then
 	if [ "$VPNHOST" = "public" ]; then fn_recommend_public; fi
 fi
 if [[ "$1" = con* ]]; then
-	if [ "$VPNHOST" = "nordvpn" ]; then limit="20"; fn_recommend_nordvpn; fi
+	if [ "$VPNHOST" = "nordvpn" ]; then limit="10"; fn_recommend_nordvpn; fi
 	if [ "$VPNHOST" = "public" ]; then fn_recommend_public; fi
 # Apparently nohup doesnt get along with with sudo and/or openvpn, can't use "&" because it messses with entering credentials
 # openvpn commands work with Debian but not with Solus. Solus uses NMCLI as a mandatory OpenVPN overlay
@@ -451,10 +472,10 @@ if [[ "$1" = con* ]]; then
 		cd /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/
 		IPBEFORECONNECT=`curl --silent $IPFINDERURL`
 		if [ $DISTRO != "solus" ]; then
-			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
-			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}/$BESTSERVER &
+			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}/$BESTSERVER &
 		elif [[ $DISTRO = *olus* ]]; then
-			nmcli c up /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVERRAWOUTPUT.${PROTOCOL,,} --ask
+			fn_connect_vpn_nmcli
 		fi
 		IPAFTERCONNECT=`curl --silent $IPFINDERURL`
 		fn_check_vpn_success
@@ -465,7 +486,7 @@ if [[ "$1" = con* ]]; then
 			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 		elif [[ $DISTRO = *olus* ]]; then
-			nmcli c up /etc/openvpn/${VPNHOST,,}/$BESTSERVERRAWOUTPUT --ask
+			fn_connect_vpn_nmcli
 		fi
 		IPAFTERCONNECT=`curl --silent $IPFINDERURL`
 		fn_check_vpn_success
