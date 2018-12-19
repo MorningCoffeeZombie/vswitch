@@ -254,6 +254,13 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo echo "N" | sudo unzip openvpn*.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm configs*.zip*
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
+	elif [ "$VPNHOST" = "usenet" ]; then
+		sudo mkdir /etc/openvpn/${VPNHOST,,}
+		cd /etc/openvpn/${VPNHOST,,}
+		wget https://usenetserver.com/vpn/software/uns_configs.zip
+		sudo echo "N" | sudo unzip uns_configs*.zip* # Echo "N" to not overwrite any of the existing VPN files
+		sudo rm uns_configs*.zip*
+		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 	fi
 fi
 if [[ "$1" = host* ]]; then
@@ -266,7 +273,7 @@ if [[ "$1" = host* ]]; then
 	else
 		fn_check_conf
 		PS3='Choose from a list of supported VPN providers: '
-		options=("NordVPN" "PIA" "Public" "Quit")
+		options=("NordVPN" "PIA" "Public" "UseNet" "Quit")
 		select provider in "${options[@]}"
 		do
 		case $provider in
@@ -276,6 +283,8 @@ if [[ "$1" = host* ]]; then
 				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; echo "$provider entered"; break;;
 			"Public")
 				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; printf "$provider entered. ${RED}${BOLDFONT}PUBLIC VPNs ARE NOT ASSUMED TO BE SAFE!${NC}${NORMALFONT} \n"; break;;	
+			"UseNet")
+				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; echo "$provider entered"; break;;
 			"Quit")
 				break;;
 			*) echo "invalid option $REPLY";;

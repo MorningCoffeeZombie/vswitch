@@ -18,12 +18,13 @@ VPN Provider: NordVPN
 VPN Provider: Publicly available VPNs (use at your own risk)  
 VPN Provider: PrivateInternetAccess (semi supported)  
 VPN Provider: IP Vanish (semi supported)  
+VPN Provider: UseNet (semi supported)  
 
 # LinuxVPNKillswitch (vswitch)
 **vswitch**: "VPN kill Switch"  
 A Linux VPN killswitch designed, primarily, for OpenVPN via NordVPN hosting.  
 
-This script was written natively on Solus OS built with compatibility in-mind for Debian based systems.  
+This script was written natively on Solus OS built with compatibility in-mind for Debian & Arch based systems.  
 
 The methodology employed is to utilize ufw, an uncomplicated firewall, to block out all traffic not traveling through tun+ (tun0). In the event of a VPN disconnect all traffic will be blocked via firewall until either the connection is reestablished or the vswitch is disabled.  
 

@@ -11,9 +11,7 @@ MID:	'recommender' can find nordvpn servers that are unofficial?!?
 LOW:	'recommender' currently only works for NordVPN
 LOW:	should i offer to restore hosts file during uninstall?
 LOW:	IPv6 is unsupported
-MID:	Optional storage of username is unsupported
 MID:	Need to escape the content/vars pulled from conf file
-HIGH:	Make sure adding username via nmcli isn't borked
 
 
 
@@ -44,6 +42,11 @@ HIGH:	need to make connect and disconnect useful
 		integrate the native openvpn commands (they also share variables for udp/tcp)
 			offer ipv4 & ipv6 support
 		The issues with `openvpn` command are due to NMCLI being the proper overlay for connections. Use `nmcli c up file.ovpn --ask` to connect
+HIGH:	Make sure adding username via nmcli isn't borked
+MID:	Optional storage of username is unsupported
+
+
+
 
 
 
