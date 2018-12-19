@@ -5,6 +5,7 @@
 
 source /etc/openvpn/vswitch.conf
 source /etc/bash_completion.d/vswitch
+IPFINDERURL="icanhazip.com"
 # Text effects
 BOLDFONT=$(tput bold)
 NORMALFONT=$(tput sgr0)
@@ -90,7 +91,7 @@ function fn_enable_vswitch(){
 		printf "${RED}VSWITCH COULD NOT ACTIVATE!${NC} \n"
 	fi
 	if [[ $(sudo ufw status) = *ALLOW*OUT*tun* ]] &>/dev/null; then
-		NEWIP=`curl icanhazip.com` &>/dev/null
+		NEWIP=`curl $IPFINDERURL` &>/dev/null
 		printf "VPN killswitch	\t ${GREEN}ENABLED${NC} \n"
 		printf "Your current IP is	\t ${GREEN}${NEWIP}${NC} \n" 
 	fi
@@ -116,12 +117,20 @@ function fn_check_distro(){
 }
 function fn_check_connectivity(){
 	# The idea is: if you can't find IP from any of these (generally reliable) sites...you're probably actively filtering connections.
-	if curl icanhazip.com &>/dev/null && curl http://www.google.com &>/dev/null && dig +short myip.opendns.com @resolver1.opendns.com &>/dev/null && wget -qO- ipinfo.io/ip &>/dev/null && curl checkip.amazonaws.com &>/dev/null && dig TXT +short o-o.myaddr.l.google.com @ns1.google.com &>/dev/null; then
+	if curl $IPFINDERURL &>/dev/null && curl http://www.google.com &>/dev/null && dig +short myip.opendns.com @resolver1.opendns.com &>/dev/null && wget -qO- ipinfo.io/ip &>/dev/null && curl checkip.amazonaws.com &>/dev/null && dig TXT +short o-o.myaddr.l.google.com @ns1.google.com &>/dev/null; then
 		# If you CAN curl then:
 		UFWSTATUS="webaccess"
 	else
 		# If you CANNOT curl & wget & dig then:
 		UFWSTATUS="webdenied"
+	fi
+}
+function fn_check_vpn_success(){
+	if [ "$IPBEFORECONNECT" = "$IPAFTERCONNECT" ]; then
+		printf "${RED}${BOLDFONT}VPN CONNECTION FAILED!${NORMALFONT}${NC} \n"
+		printf "${RED}${BOLDFONT}YOUR IP HAS NOT CHANGED!${NORMALFONT}${NC} \n"
+	else
+		printf "${GREEN}${BOLDFONT}Your IP has changed to: \t $IPAFTERCONNECT${NORMALFONT}${NC} \n"
 	fi
 }
 function fn_vswitch_ascii(){
@@ -350,7 +359,7 @@ if [[ "$1" = stat* ]]; then
 	fi
 fi
 if [[ "$1" = who* ]]; then
-		NEWIP=`curl --silent icanhazip.com` &>/dev/null
+		NEWIP=`curl --silent $IPFINDERURL` &>/dev/null
 		printf "Your current IP is:	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
 if [[ "$1" = speed* ]]; then
@@ -374,7 +383,7 @@ fi
 ####################
 # CONNECT AND ENABLE
 ####################
-function fn_recommend_server(){
+function fn_recommend_nordvpn(){
 # JSON API of interest:	https://nordvpn.com/api/server
 # JSON API of interest:	https://api.nordvpn.com/server
 # JSON API of interest:	https://nordvpn.com/api/server/stats
@@ -384,7 +393,6 @@ function fn_recommend_server(){
 	servers=$(curl --silent https://nordvpn.com/api/server/stats)
 	capacity="30"
 	#limit="20"
-
 
 	# Declare and populate array
 	declare -A results
@@ -409,7 +417,7 @@ function fn_recommend_server(){
 	if [ ${#results[@]} -eq 0 ]; then
 		>&2 echo "$(tput setaf 1)No servers found "
 	else
-		printf "${BOLDFONT}SERVER \t\t	  POPULATION${NORMALFONT}\n"
+		printf "${BOLDFONT}SERVER \t\t	POPULATION${NORMALFONT}\n"
 		for key in "${!results[@]}"
 		do
 			echo -e "$(tput setaf 6 && tput bold)$key $(tput sgr0) ${results[$key]}%"
@@ -417,35 +425,58 @@ function fn_recommend_server(){
 		awk '{print $NF,$0}' | sort -n | cut -f2- -d' ' | column -t
 	fi
 }
+function fn_recommend_public(){
+	cd /etc/openvpn/${VPNHOST,,}/
+	ar_qualified_servers=(*"$REGIONPREF"*"$PROTOCOL"*)
+	BESTSERVER=${ar_qualified_servers[0]}	# Just grab the first server that comes up
+	if [ "$BESTSERVER" = "*$REGIONPREF*$PROTOCOL*" ]; then 
+		BESTSERVER= #set to blank
+		echo "Could not detect a $VPNHOST server in ${REGIONPREF^^} on protocol ${PROTOCOL^^}"
+		echo "Try searching with different criteria"
+	fi
+	printf "${BOLDFONT}SERVER\n"
+	echo "$(tput setaf 6 && tput bold)${ar_qualified_servers[@]}$(tput sgr0)" | tr " " "\n"
+}
 
 if [[ "$1" = rec* ]]; then
-	limit="20"
-	fn_recommend_server
+	if [ "$VPNHOST" = "nordvpn" ]; then limit="20"; fn_recommend_nordvpn; fi
+	if [ "$VPNHOST" = "public" ]; then fn_recommend_public; fi
 fi
 if [[ "$1" = con* ]]; then
-	limit="1"
-	fn_recommend_server
+	if [ "$VPNHOST" = "nordvpn" ]; then limit="20"; fn_recommend_nordvpn; fi
+	if [ "$VPNHOST" = "public" ]; then fn_recommend_public; fi
 # Apparently nohup doesnt get along with with sudo and/or openvpn, can't use "&" because it messses with entering credentials
-# openvpn commands work with Debian but not with Solus
-	if [ "$VPNHOST" = "nordvpn" ] && [[ $DISTRO = *ebian* ]]; then
-		IPBEFORECONNECT=`curl --silent icanhazip.com`
-		sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
-		sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
-		IPAFTERCONNECT=`curl --silent icanhazip.com`
-			if [ "$IPBEFORECONNECT" = "$IPAFTERCONNECT" ]; then
-				printf "${RED}${BOLDFONT}VPN CONNECTION FAILED!${NORMALFONT}${NC} \n"
-				printf "${RED}${BOLDFONT}YOUR IP HAS NOT CHANGED!${NORMALFONT}${NC} \n"
-			else
-				printf "${GREEN}${BOLDFONT}Your IP has changed to: \t $IPAFTERCONNECT${NORMALFONT}${NC} \n"
-			fi
-#	else
-#		sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
-#		sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
-	fi
-	if [[ $DISTRO = *olus* ]]; then
-		nmcli c up /etc/openvpn/${VPNHOST,,}/$BESTSERVER --ask
-#		sudo openvpn --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
-#		sudo openvpn /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+# openvpn commands work with Debian but not with Solus. Solus uses NMCLI as a mandatory OpenVPN overlay
+	if [ "$VPNHOST" != "public" ]; then
+		cd /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/
+		IPBEFORECONNECT=`curl --silent $IPFINDERURL`
+		if [ $DISTRO != "solus" ]; then
+			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVER &
+		elif [[ $DISTRO = *olus* ]]; then
+			nmcli c up /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/$BESTSERVERRAWOUTPUT.${PROTOCOL,,} --ask
+		fi
+		IPAFTERCONNECT=`curl --silent $IPFINDERURL`
+		fn_check_vpn_success
+	elif [ "$VPNHOST" = "public" ]; then
+		cd /etc/openvpn/${VPNHOST,,}/
+		IPBEFORECONNECT=`curl --silent $IPFINDERURL`
+		if [ $DISTRO != "solus" ]; then
+			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
+		elif [[ $DISTRO = *olus* ]]; then
+			nmcli c up /etc/openvpn/${VPNHOST,,}/$BESTSERVERRAWOUTPUT --ask
+		fi
+		IPAFTERCONNECT=`curl --silent $IPFINDERURL`
+		fn_check_vpn_success
+	else
+		echo "Could not find valid host/protocol/distro..."
+		read -p "Assess and reset configs? (y/n) " yn
+		case $yn in
+			[Yy]* ) fn_check_conf; break;;
+			[Nn]* ) echo "Settings unchanged. Try running 'vswitch status' to confirm settings manually."; break;;
+			* ) echo "Please answer yes or no.";;
+		esac
 	fi
 fi
 if [[ "$1" = discon* ]]; then
@@ -539,7 +570,7 @@ fi
 
 # Trying to display ping for the top rec server (used in `connect` command)
 	#$BESTSERVERPING=$(ping -c 4 $BESTSERVERRAWOUTPUT | tail -1 | awk '{print $4}' | cut -d '/' -f 2)
-	#printf "$fn_recommend_server	\t$BESTSERVERPINGms \n"
+	#printf "$fn_recommend_nordvpn	\t$BESTSERVERPINGms \n"
 
 
 # http://blog.librato.com/posts/jq-json
