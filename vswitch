@@ -116,7 +116,6 @@ function fn_check_distro(){
 	fi
 }
 function fn_connect_vpn_nmcli(){
-	nmcli connection import type openvpn file $BESTSERVERRAWOUTPUT.${PROTOCOL,,}
 	if [ "$VPNUSERNAME" = "" ] && sudo grep -qi "username=" "/etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}";then
 		# Condition: wrong username in file
 		read -p "Enter your $VPNHOST username: " VPNUSERNAME
@@ -133,7 +132,6 @@ function fn_connect_vpn_nmcli(){
 		nmcli connection modify $BESTSERVERRAWOUTPUT.${PROTOCOL,,} +vpn.data username=$VPNUSERNAME
 		#sudo sed '/^\[vpn\]/a\username='$VPNUSERNAME'' /etc/NetworkManager/system-connections/$BESTSERVERRAWOUTPUT.${PROTOCOL,,}
 	fi
-	nmcli c up /etc/openvpn/${VPNHOST,,}/$BESTSERVERRAWOUTPUT --ask
 }
 function fn_check_connectivity(){
 	# The idea is: if you can't find IP from any of these (generally reliable) sites...you're probably actively filtering connections.
@@ -475,7 +473,10 @@ if [[ "$1" = con* ]]; then
 			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}/$BESTSERVER &
 			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}/$BESTSERVER &
 		elif [[ $DISTRO = *olus* ]]; then
+			cd /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}/
+			nmcli connection import type openvpn file $BESTSERVERRAWOUTPUT.${PROTOCOL,,}.ovpn
 			fn_connect_vpn_nmcli
+			nmcli c up $BESTSERVERRAWOUTPUT.${PROTOCOL,,} --ask
 		fi
 		IPAFTERCONNECT=`curl --silent $IPFINDERURL`
 		fn_check_vpn_success
@@ -486,7 +487,10 @@ if [[ "$1" = con* ]]; then
 			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 		elif [[ $DISTRO = *olus* ]]; then
+			cd /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/
+			nmcli connection import type openvpn file $BESTSERVERRAWOUTPUT.${PROTOCOL,,}.ovpn
 			fn_connect_vpn_nmcli
+			nmcli c up $BESTSERVERRAWOUTPUT.${PROTOCOL,,} --ask
 		fi
 		IPAFTERCONNECT=`curl --silent $IPFINDERURL`
 		fn_check_vpn_success
