@@ -157,8 +157,8 @@ source /etc/bash_completion.d/vswitch
 #sudo mandb
 
 # Adding call for custom functions to ~/.bashrc
-#sudo echo "# Added by \"LinuxVPNKillswitch\": ">>/etc/skel/.bashrc
-#sudo echo "# Added by: git clone https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git">>/etc/skel/.bashrc
+#sudo echo "# Added by \"vswitch\": ">>/etc/skel/.bashrc
+#sudo echo "# Added by: git clone https://github.com/MorningCoffeeZombie/vswitch.git">>/etc/skel/.bashrc
 #sudo echo "source /etc/openvpn/vswitch">>/etc/skel/.bashrc
 
 

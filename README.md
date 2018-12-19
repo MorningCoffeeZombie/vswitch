@@ -20,7 +20,7 @@ VPN Provider: PrivateInternetAccess (semi supported)
 VPN Provider: IP Vanish (semi supported)  
 VPN Provider: UseNet (semi supported)  
 
-# LinuxVPNKillswitch (vswitch)
+# VSWITCH
 **vswitch**: "VPN kill Switch"  
 A Linux VPN killswitch designed, primarily, for OpenVPN via NordVPN hosting.  
 
@@ -38,8 +38,8 @@ Usage documentation has been provided via man page. Run **man vswitch** to view 
 Run `./install_vswitch.sh` script and `source /etc/bash_completion.d/vswitch`. Root permissions will be required.  
 **For the lazy:**  
 ```shell
-git clone https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git
-cd LinuxVPNKillswitch
+git clone https://github.com/MorningCoffeeZombie/vswitch.git
+cd vswitch
 ./install_vswitch.sh
 source /etc/bash_completion.d/vswitch
 ```

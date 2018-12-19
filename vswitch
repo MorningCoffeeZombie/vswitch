@@ -1,5 +1,5 @@
 #!/bin/bash
-# Created by https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch.git
+# Created by https://github.com/MorningCoffeeZombie/vswitch.git
 # aka "RMJ"
 # GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
@@ -568,7 +568,7 @@ if [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
 	while true; do
 		read -p "Remove vswitch? (y/n) " yn
 		case $yn in
-			[Yy]* ) fn_uninstall_list; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/LinuxVPNKillswitch"; break;;
+			[Yy]* ) fn_uninstall_list; echo "vswitch removed. To reinstall visit https://github.com/MorningCoffeeZombie/vswitch"; break;;
 			[Nn]* ) echo "vswitch will not be removed"; break;;
 			* ) echo "Please answer yes or no.";;
 		esac
