@@ -458,6 +458,17 @@ function fn_recommend_nordvpn(){
 	done |
 		awk '{print $NF,$0}' | sort -n | cut -f2- -d' ' | column -t
 	fi
+	
+	# If `vswitch on` is active the user cannot query NordVPN:
+	wget -q --spider http://google.com
+	if [ $? -gt 0 ];then
+		# CANNOT ping google, connection is probably offline. Grab the first pre-configured VPN and hope for the best (connect)
+		printf "${YELLOW}vswitch cannot reach internet! Attempting to connect to an existing VPN config meeting current criteria.${NC}\n"
+		cd /etc/NetworkManager/system-connections/
+		key=$(ls *${REGIONPREF,,}*${PROTOCOL,,}* | head -1)
+		BESTSERVERRAWOUTPUT=${key//.udp}
+		BESTSERVER="$BESTSERVERRAWOUTPUT.ovpn"
+	fi
 }
 function fn_recommend_public(){
 	cd /etc/openvpn/${VPNHOST,,}/
