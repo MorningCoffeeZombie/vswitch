@@ -106,9 +106,9 @@ function fn_uninstall_list(){
 	sudo rm /etc/bash_completion.d/vswitch
 }
 function fn_check_distro(){
-	if [[ $(apropos "package manager" &>/dev/null) = *eopkg* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]];then
+	if [[ $(apropos "package manager" &>/dev/null) = *eopkg* ]] || [[ $(lsb_release -a &>/dev/null) = *olus* ]] || [[ $(cat /etc/issue &>/dev/null) = *olus* ]];then
 		DISTRO="solus"
-	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
+	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a &>/dev/null) = *buntu* ]] || [[ $(lsb_release -a &>/dev/null) = *ebian* ]];then
 		alias eopkg="apt-get"
 		DISTRO="debian"
 	elif [[ $(apropos "package manager" &>/dev/null) = *pacman* ]]; then
@@ -207,19 +207,19 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		yes | sudo pacman -Syu ca-certs
 	fi
 	if [ "$VPNHOST" = "nordvpn" ]; then
-		sudo mkdir /etc/openvpn/${VPNHOST,,}
+		sudo mkdir /etc/openvpn/${VPNHOST,,} &>/dev/null
 		cd /etc/openvpn/${VPNHOST,,}
 		sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 		sudo echo "N" | sudo unzip ovpn.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm ovpn.zip*
-		sudo mkdir /etc/openvpn/${VPNHOST,,}/certificates
+		sudo mkdir /etc/openvpn/${VPNHOST,,}/certificates &>/dev/null
 		cd /etc/openvpn/${VPNHOST,,}/certificates
 		sudo wget https://downloads.nordcdn.com/configs/archives/certificates/servers.zip
 		sudo echo "N" | sudo unzip servers.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm servers.zip*
 		cd /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}   # Sets current ovpn_ dir to declared variable in lower case
 	elif [ "$VPNHOST" = "public" ]; then
-		sudo mkdir /etc/openvpn/${VPNHOST,,}
+		sudo mkdir /etc/openvpn/${VPNHOST,,} &>/dev/null
 		cd /etc/openvpn/${VPNHOST,,}
 		for a in "${ar_public_vpn_urls[@]}"
 		do
@@ -235,27 +235,27 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		cd /etc/openvpn/
 		rm /etc/openvpn/${VPNHOST,,}/*ovpn.1	# Remove accidentally duplicated files
 	elif [ "$VPNHOST" = "pia" ]; then
-		sudo mkdir /etc/openvpn/${VPNHOST,,}
-		sudo mkdir /etc/openvpn/${VPNHOST,,}/ovpn_udp
+		sudo mkdir /etc/openvpn/${VPNHOST,,} &>/dev/null
+		sudo mkdir /etc/openvpn/${VPNHOST,,}/ovpn_udp &>/dev/null
 		cd /etc/openvpn/${VPNHOST,,}/ovpn_udp
 		sudo wget https://www.privateinternetaccess.com/openvpn/openvpn.zip
 		sudo echo "N" | sudo unzip openvpn*.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm openvpn*.zip*
-		sudo mkdir /etc/openvpn/${VPNHOST,,}/ovpn_tcp
+		sudo mkdir /etc/openvpn/${VPNHOST,,}/ovpn_tcp &>/dev/null
 		cd /etc/openvpn/${VPNHOST,,}/ovpn_tcp
 		sudo wget https://www.privateinternetaccess.com/openvpn/openvpn-tcp.zip
 		sudo echo "N" | sudo unzip openvpn*.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm openvpn*.zip*
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 	elif [ "$VPNHOST" = "ipvanish" ]; then
-		sudo mkdir /etc/openvpn/${VPNHOST,,}
+		sudo mkdir /etc/openvpn/${VPNHOST,,} &>/dev/null
 		cd /etc/openvpn/${VPNHOST,,}
 		wget https://www.ipvanish.com/software/configs/configs.zip
 		sudo echo "N" | sudo unzip configs*.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm configs*.zip*
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 	elif [ "$VPNHOST" = "usenet" ]; then
-		sudo mkdir /etc/openvpn/${VPNHOST,,}
+		sudo mkdir /etc/openvpn/${VPNHOST,,} &>/dev/null
 		cd /etc/openvpn/${VPNHOST,,}
 		wget https://usenetserver.com/vpn/software/uns_configs.zip
 		sudo echo "N" | sudo unzip uns_configs*.zip* # Echo "N" to not overwrite any of the existing VPN files
@@ -397,7 +397,7 @@ if [[ "$1" = who* ]]; then
 		printf "Your current IP is:	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
 if [[ "$1" = speed* ]]; then
-	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null && [[ $(sudo eopkg check speedtest-cli) != *integrity*of*speedtest-cli*OK* ]] && [[ $(pacman -Qi speedtest-cli) != *local/* ]]; then
+	if [[ $(dpkg -s ufw | grep -i status  &>/dev/null) = *not*installed* ]] || [[ $(sudo eopkg check speedtest-cli &>/dev/null) != *integrity*of*speedtest-cli*OK* ]] || [[ $(pacman -Qi speedtest-cli  &>/dev/null) != *local/* ]]; then
 		while true; do
 			read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? y/n: " yn
 			case $yn in
