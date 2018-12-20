@@ -15,6 +15,7 @@ MID:	Need to escape the content/vars pulled from conf file
 WISH:	Offer onion/tor routing
 			Review:	https://linuxaria.com/howto/how-to-anonymize-the-programs-from-your-terminal-with-torify
 			Review:	https://github.com/susmithHCK/torghost
+HIGH:	'connect' relies on 'recommend' which relies on being able to query Nord's API. Without query results the user cannot connect to vpn if 'vswitch on'
 
 
 

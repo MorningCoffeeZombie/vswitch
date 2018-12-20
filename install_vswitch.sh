@@ -10,10 +10,10 @@ TODAYISO=`date '+%Y%m%d-%H%M'`
 INSTALLDIR=$(pwd)
 
 function fn_check_distro(){
-	if [[ $(apropos "package manager" &>/dev/null) = *eopkg* ]] || [[ $(lsb_release -a) = *olus* ]] || [[ $(cat /etc/issue) = *olus* ]];then
+	if [[ $(apropos "package manager" &>/dev/null) = *eopkg* ]] || [[ $(lsb_release -a &>/dev/null) = *olus* ]] || [[ $(cat /etc/issue &>/dev/null) = *olus* ]];then
 		alias 'apt-get'=eopkg
 		DISTRO="solus"
-	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a) = *buntu* ]] || [[ $(lsb_release -a) = *ebian* ]];then
+	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a &>/dev/null) = *buntu* ]] || [[ $(lsb_release -a &>/dev/null) = *ebian* ]];then
 		alias eopkg="apt-get"
 		DISTRO="debian"
 	elif [[ $(apropos "package manager" &>/dev/null) = *pacman* ]]; then
@@ -123,7 +123,7 @@ sudo sed -i '/IPV6/ s/.*/IPV6='yes'/' /etc/default/ufw
 
 # Saving known VPNs
 # Taken from:	https://nordvpn.com/tutorials/linux/openvpn/
-sudo mkdir /etc/openvpn/${VPNHOST,,}
+sudo mkdir /etc/openvpn/${VPNHOST,,} &>/dev/null
 cd  /etc/openvpn/${VPNHOST,,}
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
 sudo echo "N" | sudo unzip /etc/openvpn/${VPNHOST,,}/ovpn.zip
