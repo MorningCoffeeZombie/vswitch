@@ -126,7 +126,7 @@ sudo sed -i '/IPV6/ s/.*/IPV6='yes'/' /etc/default/ufw
 sudo mkdir /etc/openvpn/${VPNHOST,,}
 cd  /etc/openvpn/${VPNHOST,,}
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-sudo unzip /etc/openvpn/${VPNHOST,,}/ovpn.zip
+sudo echo "N" | sudo unzip /etc/openvpn/${VPNHOST,,}/ovpn.zip
 sudo rm /etc/openvpn/${VPNHOST,,}/ovpn.zip
 cd /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}	# Sets cd ovpn_ to declared variable in lower case
 

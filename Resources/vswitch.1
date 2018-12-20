@@ -92,7 +92,7 @@ Set \fBudp\fR as the preferred protocol for connecting to VPNs
 Prevent all non-tunneled communications
 
 
-.SH "ESCALATING TUNNELING"
+.SH "ESCALATED TUNNELING"
 \fBvswitch protocol udp\fR
 \fBvswitch\fR allows users to immediately cut all connections (tunneled or not) with it's commands. To reestablish unfiltered connections users must de-escalate in the proper order.
 .TP
@@ -117,8 +117,13 @@ v
 \fBOpenVPN\fR
 .TP
 \fBufw\fR
+.TP
+\fBNetworkManager\fR
 
 
+.SH "BUGS"
+	Please report bugs at:	https://github.com/MorningCoffeeZombie/vswitch/issues
+.
 .SH "AUTHOR"
    git clone https://github.com/MorningCoffeeZombie/vswitch.git
 .

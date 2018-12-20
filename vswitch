@@ -76,7 +76,7 @@ function fn_check_iso_region(){
 		echo "Entered: $REGIONPREF"
 		sudo sed -i '/REGIONPREF/ s/.*/REGIONPREF='${REGIONPREF,,}'/' /etc/openvpn/vswitch.conf
 	else
-		echo "$REGIONPREF is not a valid region and/or not supported by NordVPN at this time"
+		echo "$REGIONPREF is not a valid region and/or not supported by $VPNHOST at this time"
 	fi
 }
 # Used by `on` and `unpanic` to return to a non-firewalled state
@@ -251,7 +251,7 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo mkdir /etc/openvpn/${VPNHOST,,}
 		cd /etc/openvpn/${VPNHOST,,}
 		wget https://www.ipvanish.com/software/configs/configs.zip
-		sudo echo "N" | sudo unzip openvpn*.zip* # Echo "N" to not overwrite any of the existing VPN files
+		sudo echo "N" | sudo unzip configs*.zip* # Echo "N" to not overwrite any of the existing VPN files
 		sudo rm configs*.zip*
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 	elif [ "$VPNHOST" = "usenet" ]; then
@@ -270,13 +270,19 @@ if [[ "$1" = host* ]]; then
 		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='public'/' /etc/openvpn/vswitch.conf
 	elif [[ "${2,,}" = pia* ]] || [[ "${2,,}" = private* ]]; then
 		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='pia'/' /etc/openvpn/vswitch.conf
+	elif [[ "${2,,}" = ipv* ]]; then
+		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='ipvanish'/' /etc/openvpn/vswitch.conf
+	elif [[ "${2,,}" = usen* ]]; then
+		sudo sed -i '/VPNHOST/ s/.*/VPNHOST='usenet'/' /etc/openvpn/vswitch.conf
 	else
 		fn_check_conf
 		PS3='Choose from a list of supported VPN providers: '
-		options=("NordVPN" "PIA" "Public" "UseNet" "Quit")
+		options=("IPVanish" "NordVPN" "PIA" "Public" "UseNet" "Quit")
 		select provider in "${options[@]}"
 		do
 		case $provider in
+			"IPVanish")
+				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; echo "$provider entered"; break;;
 			"NordVPN")
 				sudo sed -i '/VPNHOST/ s/.*/VPNHOST='${provider,,}'/' /etc/openvpn/vswitch.conf; echo "$provider entered"; break;;
 			"PIA")
@@ -391,9 +397,9 @@ if [[ "$1" = who* ]]; then
 		printf "Your current IP is:	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
 if [[ "$1" = speed* ]]; then
-	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null || [[ $(sudo eopkg check speedtest-cli) != *integrity*of*speedtest-cli*OK* ]] || [[ $(pacman -Qi speedtest-cli) != local/* ]]; then
+	if [[ $(dpkg -s ufw | grep -i status) = *not*installed* ]] &>/dev/null && [[ $(sudo eopkg check speedtest-cli) != *integrity*of*speedtest-cli*OK* ]] && [[ $(pacman -Qi speedtest-cli) != *local/* ]]; then
 		while true; do
-			read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? " yn
+			read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? y/n: " yn
 			case $yn in
 				[Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; pacman -Syu speedtest-cli; vswitch speedtest; break;;
 				[Nn]* ) echo "speedtest-cli not installed."; break;;
@@ -595,6 +601,7 @@ fi
 
 # List of public IP resolvers (as commands):
 #curl icanhazip.com
+#curl ifconfig.me
 #dig +short myip.opendns.com @resolver1.opendns.com
 #dig TXT +short o-o.myaddr.l.google.com @ns1.google.com
 #curl ipinfo.io/ip

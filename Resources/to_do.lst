@@ -8,10 +8,13 @@
 
 REVIEW:	https://github.com/gjedeer/nordvpn/issues/1
 MID:	'recommender' can find nordvpn servers that are unofficial?!?
-LOW:	'recommender' currently only works for NordVPN
+LOW:	'recommender' currently only works for NordVPN & public
 LOW:	should i offer to restore hosts file during uninstall?
 LOW:	IPv6 is unsupported
 MID:	Need to escape the content/vars pulled from conf file
+WISH:	Offer onion/tor routing
+			Review:	https://linuxaria.com/howto/how-to-anonymize-the-programs-from-your-terminal-with-torify
+			Review:	https://github.com/susmithHCK/torghost
 
 
 
