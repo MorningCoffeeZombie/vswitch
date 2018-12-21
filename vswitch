@@ -397,22 +397,23 @@ if [[ "$1" = who* ]]; then
 		printf "Your current IP is:	\t ${GREEN}${NEWIP}${NC}\n" 
 fi
 if [[ "$1" = speed* ]]; then
-	if [[ $(dpkg -s ufw | grep -i status  &>/dev/null) = *not*installed* ]] || [[ $(sudo eopkg check speedtest-cli &>/dev/null) != *integrity*of*speedtest-cli*OK* ]] || [[ $(pacman -Qi speedtest-cli  &>/dev/null) != *local/* ]]; then
+	if [[ $(which speedtest-cli) != */usr/bin/speedtest* ]] &>/dev/null; then
 		while true; do
-			read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? y/n: " yn
+			read -p "This function requires an additional package \"speedtest-cli\". Install this package? (y/n) " yn
 			case $yn in
 				[Yy]* ) INSTALLSPEED="install"; break;;
 				[Nn]* ) echo "speedtest-cli not installed."; break;;
 				* ) echo "Please answer yes or no.";;
 			esac
 		done
-	if [ $INSTALLSPEED = "install" ] && [ $DISTRO = "solus" ]; then sudo eopkg install speedtest-cli -y &>/dev/null; vswitch speedtest; fi
-	if [ $INSTALLSPEED = "install" ] && [ $DISTRO = "debian" ]; then sudo apt-get install speedtest-cli -y &>/dev/null; vswitch speedtest; fi
-	if [ $INSTALLSPEED = "install" ] && [ $DISTRO = "arch" ]; then sudo pacman -Syu speedtest-cli &>/dev/null; vswitch speedtest; fi
-	elif [[ "$2" = "" ]] || [[ "$2" != * ]]; then
-		speedtest --simple --secure
+		if [ "$INSTALLSPEED" = "install" ] && [ "$DISTRO" = "solus" ]; then sudo eopkg install speedtest-cli -y &>/dev/null; INSTALLSPEED= ; vswitch speedtest; fi
+		if [ "$INSTALLSPEED" = "install" ] && [ "$DISTRO" = "debian" ]; then sudo apt-get install speedtest-cli -y &>/dev/null; INSTALLSPEED= ; vswitch speedtest; fi
+		if [ "$INSTALLSPEED" = "install" ] && [ "$DISTRO" = "arch" ]; then sudo echo y | sudo pacman -Syu speedtest-cli &>/dev/null; INSTALLSPEED= ; vswitch speedtest; fi
+	fi
+	if [ -z "$2" ]; then
+		speedtest --simple --secure 2>/dev/null
 	elif [[ "$2" = byt* ]]; then
-		speedtest --simple --secure --bytes
+		speedtest --simple --secure --bytes 2>/dev/null
 	fi
 fi
 	
