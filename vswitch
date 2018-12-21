@@ -401,11 +401,14 @@ if [[ "$1" = speed* ]]; then
 		while true; do
 			read -p "This function requires an additional packaged \"speedtest-cli\". Install this package? y/n: " yn
 			case $yn in
-				[Yy]* ) sudo eopkg install speedtest-cli -y &>/dev/null; sudo apt-get install speedtest-cli -y &>/dev/null; pacman -Syu speedtest-cli; vswitch speedtest; break;;
+				[Yy]* ) INSTALLSPEED="install"; break;;
 				[Nn]* ) echo "speedtest-cli not installed."; break;;
 				* ) echo "Please answer yes or no.";;
 			esac
 		done
+	if [ $INSTALLSPEED = "install" ] && [ $DISTRO = "solus" ]; then sudo eopkg install speedtest-cli -y &>/dev/null; vswitch speedtest; fi
+	if [ $INSTALLSPEED = "install" ] && [ $DISTRO = "debian" ]; then sudo apt-get install speedtest-cli -y &>/dev/null; vswitch speedtest; fi
+	if [ $INSTALLSPEED = "install" ] && [ $DISTRO = "arch" ]; then sudo pacman -Syu speedtest-cli &>/dev/null; vswitch speedtest; fi
 	elif [[ "$2" = "" ]] || [[ "$2" != * ]]; then
 		speedtest --simple --secure
 	elif [[ "$2" = byt* ]]; then
@@ -455,7 +458,7 @@ function fn_recommend_nordvpn(){
 		for key in "${!results[@]}"
 		do
 			echo -e "$(tput setaf 6 && tput bold)$key $(tput sgr0) ${results[$key]}%"
-	done |
+		done |
 		awk '{print $NF,$0}' | sort -n | cut -f2- -d' ' | column -t
 	fi
 	
