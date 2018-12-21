@@ -394,7 +394,9 @@ if [[ "$1" = stat* ]]; then
 fi
 if [[ "$1" = who* ]]; then
 		NEWIP=`curl --silent $IPFINDERURL` &>/dev/null
-		printf "Your current IP is:	\t ${GREEN}${NEWIP}${NC}\n" 
+		LOCALIP=`ip addr | grep -i 'state UP' -A2 | grep -i 'inet'| tail -n1 | awk '{print $2}' | cut -f1 -d'/'` &>/dev/null
+		printf "Your current Public IP is:	\t ${GREEN}${NEWIP}${NC}\n" 
+		printf "Your current Local IP is:	\t ${GREEN}${LOCALIP}${NC}\n" 
 fi
 if [[ "$1" = speed* ]]; then
 	if [[ $(which speedtest-cli) != */usr/bin/speedtest* ]] &>/dev/null; then
