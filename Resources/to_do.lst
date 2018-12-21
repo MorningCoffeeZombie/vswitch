@@ -16,7 +16,7 @@ WISH:	Offer onion/tor routing
 			Review:	https://linuxaria.com/howto/how-to-anonymize-the-programs-from-your-terminal-with-torify
 			Review:	https://github.com/susmithHCK/torghost
 HIGH:	'connect' relies on 'recommend' which relies on being able to query Nord's API. Without query results the user cannot connect to vpn if 'vswitch on'
-
+MID:    sourcing in the autocomplete script is not working via script (user must manually enter it)
 
 
 
