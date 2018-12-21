@@ -123,6 +123,7 @@ sudo sed -i '/IPV6/ s/.*/IPV6='yes'/' /etc/default/ufw
 
 # Saving known VPNs
 # Taken from:	https://nordvpn.com/tutorials/linux/openvpn/
+sudo mkdir /etc/openvpn &>/dev/null
 sudo mkdir /etc/openvpn/${VPNHOST,,} &>/dev/null
 cd  /etc/openvpn/${VPNHOST,,}
 sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
