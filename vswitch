@@ -144,7 +144,7 @@ function fn_check_connectivity(){
 	fi
 }
 function fn_check_vpn_success(){
-	if [ "$IPBEFORECONNECT" = "$IPAFTERCONNECT" ]; then
+	if [ "$IPBEFORECONNECT" = "$IPAFTERCONNECT" ] || [ "$DNSBEFORECONNECT" = "$DNSAFTERCONNECT" ]; then
 		printf "${RED}${BOLDFONT}VPN CONNECTION FAILED!${NORMALFONT}${NC} \n"
 		printf "${RED}${BOLDFONT}YOUR IP HAS NOT CHANGED!${NORMALFONT}${NC} \n"
 	else
@@ -501,6 +501,7 @@ if [[ "$1" = con* ]]; then
 	if [ "$VPNHOST" != "public" ]; then
 		cd /etc/openvpn/${VPNHOST,,}/*${PROTOCOL,,}*/
 		IPBEFORECONNECT=`curl --silent $IPFINDERURL`
+		DNSBEFORECONNECT=`nslookup host | grep -i 'Server' | cut -f2 -d':'`
 		if [ $DISTRO != "solus" ]; then
 			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}/$BESTSERVER &
 			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/ovpn_${PROTOCOL,,}/$BESTSERVER &
@@ -511,10 +512,12 @@ if [[ "$1" = con* ]]; then
 			nmcli c up $BESTSERVERRAWOUTPUT.${PROTOCOL,,} --ask
 		fi
 		IPAFTERCONNECT=`curl --silent $IPFINDERURL`
+		DNSAFTERCONNECT=`nslookup host | grep -i 'Server' | cut -f2 -d':'`
 		fn_check_vpn_success
 	elif [ "$VPNHOST" = "public" ]; then
 		cd /etc/openvpn/${VPNHOST,,}/
 		IPBEFORECONNECT=`curl --silent $IPFINDERURL`
+		DNSBEFORECONNECT=`nslookup host | grep -i 'Server' | cut -f2 -d':'`
 		if [ $DISTRO != "solus" ]; then
 			sudo openvpn --auth-nocache --config /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
 			sudo openvpn --auth-nocache /etc/openvpn/${VPNHOST,,}/$BESTSERVER &
@@ -525,6 +528,7 @@ if [[ "$1" = con* ]]; then
 			nmcli c up $BESTSERVERRAWOUTPUT.${PROTOCOL,,} --ask
 		fi
 		IPAFTERCONNECT=`curl --silent $IPFINDERURL`
+		DNSAFTERCONNECT=`nslookup host | grep -i 'Server' | cut -f2 -d':'`
 		fn_check_vpn_success
 	else
 		echo "Could not find valid host/protocol/distro..."
