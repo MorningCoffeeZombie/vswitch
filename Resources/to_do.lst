@@ -9,6 +9,7 @@
 
 MID:	'recommender' can find nordvpn servers that are unofficial?!?
 LOW:	'recommender' currently only works for NordVPN & public
+LOW:	'recommender' is grabbing the lowest recommended server
 LOW:	should i offer to restore hosts file during uninstall?
 LOW:	IPv6 is unsupported
 MID:	Need to escape the content/vars pulled from conf file
