@@ -108,7 +108,7 @@ function fn_uninstall_list(){
 function fn_check_distro(){
 	if [[ $(apropos "package manager" &>/dev/null) = *eopkg* ]] || [[ $(lsb_release -a &>/dev/null) = *olus* ]] || [[ $(cat /etc/issue &>/dev/null) = *olus* ]];then
 		DISTRO="solus"
-	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a &>/dev/null) = *buntu* ]] || [[ $(lsb_release -a &>/dev/null) = *ebian* ]];then
+	elif [[ $(apropos "package manager" &>/dev/null) = *apt-get* ]] || [[ $(lsb_release -a &>/dev/null) = *buntu* ]] || [[ $(lsb_release -a &>/dev/null) = *ebian* ]] || [[ $(lsb_release -a &>/dev/null) = *kali* ]] || [[ $(lsb_release -a &>/dev/null) = *mint* ]];then
 		alias eopkg="apt-get"
 		DISTRO="debian"
 	elif [[ $(apropos "package manager" &>/dev/null) = *pacman* ]]; then
@@ -176,7 +176,7 @@ fi
 if [[ "$1" = distro* ]] || [ "$1" = "os" ]; then
 	fn_check_conf
 	PS3="What Linux distribution are you using? "
-	options=("Solus OS" "Debian-based" "Unknown" "Quit")
+	options=("Solus OS" "Debian-based" "Arch-based" "Unknown" "Quit")
 	select userdistro in "${options[@]}"
 	do
 	case $userdistro in
@@ -184,6 +184,8 @@ if [[ "$1" = distro* ]] || [ "$1" = "os" ]; then
 			sudo sed -i '/DISTRO/ s/.*/DISTRO='solus'/' /etc/openvpn/vswitch.conf; echo "$userdistro entered"; break;;
 		"Debian-based")
 			sudo sed -i '/DISTRO/ s/.*/DISTRO='debian'/' /etc/openvpn/vswitch.conf; echo "$userdistro entered"; break;;
+		"Arch-based")
+			sudo sed -i '/DISTRO/ s/.*/DISTRO='arch'/' /etc/openvpn/vswitch.conf; echo "$userdistro entered"; break;;
 		"Unknown")
 			fn_check_distro; sudo sed -i '/DISTRO/ s/.*/DISTRO='$DISTRO'/' /etc/openvpn/vswitch.conf; echo "\"$userdistro\" entered - Distribution detected and set as $DISTRO"; break;;
 		"Quit")
