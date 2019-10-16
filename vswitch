@@ -264,6 +264,16 @@ if [ "$1" = "update" ] || [ "$1" = "up" ]; then
 		sudo rm uns_configs*.zip*
 		sudo chmod -R 777 /etc/openvpn/${VPNHOST,,}
 	fi
+	# Update vswitch itself.
+	if [ -f /usr/bin/vswitch ]; then
+		cd /usr/bin/vswitch
+		sudo wget https://raw.githubusercontent.com/MorningCoffeeZombie/vswitch/master/vswitch
+			# The layman's way of doing it:	curl --silent -L https://raw.githubusercontent.com/MorningCoffeeZombie/vswitch/master/vswitch>>vswitch
+		sudo chmod +x /usr/bin/vswitch
+	else
+		printf "${RED}${BOLDFONT}VSWITCH COULD NOT BE FOUND IN STANDARD INSTALLATION DIRECTORY!${NORMALFONT}${NC} \n"
+		printf "${RED}${BOLDFONT}Please find: \t/usr/bin/vswitch${NORMALFONT}${NC} \n"
+fi
 fi
 if [[ "$1" = host* ]]; then
 	if [[ "${2,,}" = nord* ]]; then
